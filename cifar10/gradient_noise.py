@@ -8,8 +8,8 @@ def get_layerWise_norms(net):
     g = []
     for p in net.parameters():    
         if p.requires_grad:
-            w.append(p.view(-1).norm())
-            g.append(p.grad.view(-1).norm())
+            w.append(p.view(-1).norm().numpy())
+            g.append(p.grad.view(-1).norm().numpy())
     return w, g
 
 

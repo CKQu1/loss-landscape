@@ -104,7 +104,11 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
 
     hist_noise = [noise_norm.numpy(), alpha.numpy()]
 
-    return train_loss/total, 100 - 100.*correct/total, hist_noise, *get_layerWise_norms(net)
+    w,g = get_layerWise_norms(net)
+
+    layerWise_norms = [w,g]
+
+    return train_loss/total, 100 - 100.*correct/total, hist_noise, layerWise_norms
 
 
 def test(testloader, net, criterion, use_cuda=True):
