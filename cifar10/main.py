@@ -3,6 +3,7 @@ import os
 import random
 import numpy as np
 import argparse
+import scipy.io as sio
 
 import torch
 import torch.nn as nn
@@ -15,6 +16,8 @@ import torch.nn.parallel
 
 import model_loader
 import dataloader
+
+from gradient_noise import get_layerWise_norms, get_grads, alpha_estimator, alpha_estimator2
 
 def init_params(net):
     for m in net.modules():
@@ -37,6 +40,8 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
     correct = 0
     total = 0
 
+    grads = []
+
     if isinstance(criterion, nn.CrossEntropyLoss):
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             batch_size = inputs.size(0)
@@ -48,6 +53,11 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
             outputs = net(inputs)
             loss = criterion(outputs, targets)
             loss.backward()
+
+            # get gradient
+            grad = get_grads(net).cpu()
+            grads.append(grad)
+
             optimizer.step()
             train_loss += loss.item()*batch_size
             _, predicted = torch.max(outputs.data, 1)
@@ -67,12 +77,34 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
             outputs = F.softmax(net(inputs))
             loss = criterion(outputs, one_hot_targets)
             loss.backward()
+
+            # get gradient
+            grad = get_grads(net).cpu()
+            grads.append(grad)
+
             optimizer.step()
             train_loss += loss.item()*batch_size
             _, predicted = torch.max(outputs.data, 1)
             correct += predicted.cpu().eq(targets).cpu().sum().item()
 
-    return train_loss/total, 100 - 100.*correct/total
+    M = len(grads[0]) # total number of parameters
+    grads = torch.cat(grads).view(-1, M)
+    mean_grad = grads.sum(0) / (batch_idx + 1) # divided by # batchs
+    noise_norm = (grads - mean_grad).norm(dim=1)
+    
+    N = M * (batch_idx + 1) 
+
+    for i in range(1, 1 + int(math.sqrt(N))):
+        if N%i == 0:
+            m = i
+    alpha = alpha_estimator(m, (grads - mean_grad).view(-1, 1))
+    
+    del grads
+    del mean_grad
+
+    hist_noise = [noise_norm.numpy(), alpha.numpy()]
+
+    return train_loss/total, 100 - 100.*correct/total, hist_noise, *get_layerWise_norms(net)
 
 
 def test(testloader, net, criterion, use_cuda=True):
@@ -146,7 +178,7 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer', default='sgd', help='optimizer: sgd | adam')
     parser.add_argument('--weight_decay', default=0.0005, type=float)
     parser.add_argument('--momentum', default=0.9, type=float)
-    parser.add_argument('--epochs', default=300, type=int, metavar='N', help='number of total epochs to run')
+    parser.add_argument('--epochs', default=1000, type=int, metavar='N', help='number of total epochs to run')
     parser.add_argument('--save', default='trained_nets',help='path to save trained nets')
     parser.add_argument('--save_epoch', default=10, type=int, help='save every save_epochs')
     parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
@@ -155,7 +187,7 @@ if __name__ == '__main__':
     parser.add_argument('--resume_opt', default='', help='resume optimizer from checkpoint')
 
     # model parameters
-    parser.add_argument('--model', '-m', default='vgg9')
+    parser.add_argument('--model', '-m', default='resnet18')#vgg9
     parser.add_argument('--loss_name', '-l', default='crossentropy', help='loss functions: crossentropy | mse')
 
     # data parameters
@@ -255,17 +287,34 @@ if __name__ == '__main__':
         torch.save(state, 'trained_nets/' + save_folder + '/model_0.t7')
         torch.save(opt_state, 'trained_nets/' + save_folder + '/opt_state_0.t7')
 
+    # training logs per iteration
+    training_history = []
+    testing_history = []
+    weight_grad_history = []
+    # noise logs less frequently
+    noise_norm_history_TRAIN = []
+
     for epoch in range(start_epoch, args.epochs + 1):
-        loss, train_err = train(trainloader, net, criterion, optimizer, use_cuda)
+        loss, train_err, hist_noise, layerWise_norms = train(trainloader, net, criterion, optimizer, use_cuda)
         test_loss, test_err = test(testloader, net, criterion, use_cuda)
 
         status = 'e: %d loss: %.5f train_err: %.3f test_top1: %.3f test_loss %.5f \n' % (epoch, loss, train_err, test_err, test_loss)
         print(status)
         f.write(status)
 
-        # Save checkpoint.
+        # validation acc
         acc = 100 - test_err
+
+        # record training history (starts at initial point)
+        training_history.append([loss.nump(), (100 - train_err).numpy()])
+        testing_history.append([test_loss.nump(), acc.numpy()])
+        weight_grad_history.append(layerWise_norms)            
+        # grandient noise            
+        noise_norm_history_TRAIN.append(hist_noise) 
+
+        # Save checkpoint.
         if epoch == 1 or epoch % args.save_epoch == 0 or epoch == 150:
+            # for landscape
             state = {
                 'acc': acc,
                 'epoch': epoch,
@@ -277,9 +326,20 @@ if __name__ == '__main__':
             torch.save(state, 'trained_nets/' + save_folder + '/model_' + str(epoch) + '.t7')
             torch.save(opt_state, 'trained_nets/' + save_folder + '/opt_state_' + str(epoch) + '.t7')
 
+            # save grandient noise for saving memory
+            sio.savemat('trained_nets/' + save_folder + '/' + args.model + '_gradient_noise.mat',
+                        mdict={'train_noise_norm' + str(epoch): noise_norm_history_TRAIN,'weight_grad_history' + str(epoch): weight_grad_history},
+                        appendmat=True) 
+            weight_grad_history = []            
+            noise_norm_history_TRAIN = []           
+
         if int(epoch) == 150 or int(epoch) == 225 or int(epoch) == 275:
             lr *= args.lr_decay
             for param_group in optimizer.param_groups:
                 param_group['lr'] *= args.lr_decay
 
     f.close()
+
+    sio.savemat('trained_nets/' + save_folder + '/' + args.model + '_gradient_noise.mat',
+                        mdict={'training_history': training_history,'testing_history': testing_history},
+                        appendmat=True)
