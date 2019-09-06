@@ -56,7 +56,7 @@ def alpha_estimator2(m, k, X):
 
 def compute_hessian(model, dataset, criterion):
     loader = torch.utils.data.DataLoader(dataset, batch_size=500)
-
+    device = 'cuda'
     n = sum(p.numel() for p in model.parameters())
     h = torch.zeros(n, n, device=device)
 

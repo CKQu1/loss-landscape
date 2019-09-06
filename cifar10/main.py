@@ -266,7 +266,7 @@ if __name__ == '__main__':
 
     # Optimizer
     if args.optimizer == 'sgd':
-        optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay, nesterov=True)
+        optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay, nesterov=False)
     else:
         optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
