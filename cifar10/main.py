@@ -4,6 +4,7 @@ import random
 import numpy as np
 import argparse
 import scipy.io as sio
+import math
 
 import torch
 import torch.nn as nn
@@ -14,10 +15,10 @@ import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import torch.nn.parallel
 
-import model_loader
-import dataloader
+import cifar10.model_loader as model_loader
+from cifar10.dataloader import get_data_loaders
 
-from gradient_noise import get_layerWise_norms, get_grads, alpha_estimator, alpha_estimator2
+from cifar10.gradient_noise import get_layerWise_norms, get_grads, alpha_estimator, alpha_estimator2
 
 def init_params(net):
     for m in net.modules():
@@ -182,7 +183,7 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer', default='sgd', help='optimizer: sgd | adam')
     parser.add_argument('--weight_decay', default=0.0005, type=float)
     parser.add_argument('--momentum', default=0.9, type=float)
-    parser.add_argument('--epochs', default=1000, type=int, metavar='N', help='number of total epochs to run')
+    parser.add_argument('--epochs', default=5000, type=int, metavar='N', help='number of total epochs to run')
     parser.add_argument('--save', default='trained_nets',help='path to save trained nets')
     parser.add_argument('--save_epoch', default=10, type=int, help='save every save_epochs')
     parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
@@ -191,7 +192,7 @@ if __name__ == '__main__':
     parser.add_argument('--resume_opt', default='', help='resume optimizer from checkpoint')
 
     # model parameters
-    parser.add_argument('--model', '-m', default='resnet18')#vgg9
+    parser.add_argument('--model', '-m', default='resnet20')#vgg9
     parser.add_argument('--loss_name', '-l', default='crossentropy', help='loss functions: crossentropy | mse')
 
     # data parameters
@@ -209,8 +210,9 @@ if __name__ == '__main__':
     print('\nDecay Rate: %f' % args.lr_decay)
 
     use_cuda = torch.cuda.is_available()
-    print('Current devices: ' + str(torch.cuda.current_device()))
-    print('Device count: ' + str(torch.cuda.device_count()))
+    if use_cuda:
+        print('Current devices: ' + str(torch.cuda.current_device()))
+        print('Device count: ' + str(torch.cuda.device_count()))
 
     # Set the seed for reproducing the results
     random.seed(args.rand_seed)
@@ -230,9 +232,9 @@ if __name__ == '__main__':
     if not os.path.exists('trained_nets/' + save_folder):
         os.makedirs('trained_nets/' + save_folder)
 
-    f = open('trained_nets/' + save_folder + '/log.out', 'a', 0)
+    f = open('trained_nets/' + save_folder + '/log.out', 'a')
 
-    trainloader, testloader = dataloader.get_data_loaders(args)
+    trainloader, testloader = get_data_loaders(args)
 
     if args.label_corrupt_prob and not args.resume_model:
         torch.save(trainloader, 'trained_nets/' + save_folder + '/trainloader.dat')
@@ -299,6 +301,7 @@ if __name__ == '__main__':
     noise_norm_history_TRAIN = []
 
     for epoch in range(start_epoch, args.epochs + 1):
+        print(epoch)
         loss, train_err, hist_noise, layerWise_norms = train(trainloader, net, criterion, optimizer, use_cuda)
         test_loss, test_err = test(testloader, net, criterion, use_cuda)
 
@@ -310,8 +313,8 @@ if __name__ == '__main__':
         acc = 100 - test_err
 
         # record training history (starts at initial point)
-        training_history.append([loss.nump(), (100 - train_err).numpy()])
-        testing_history.append([test_loss.nump(), acc.numpy()])
+        training_history.append([loss, 100 - train_err])
+        testing_history.append([test_loss, acc])
         weight_grad_history.append(layerWise_norms)            
         # grandient noise            
         noise_norm_history_TRAIN.append(hist_noise) 
