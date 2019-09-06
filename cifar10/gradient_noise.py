@@ -1,6 +1,7 @@
 import math
 import torch
 import numpy as np
+from hessian import hessian
 
 
 def get_layerWise_norms(net):
@@ -52,3 +53,22 @@ def alpha_estimator2(m, k, X):
     Xk = torch.sort(X_log_norm)[0][m*k-1]
     diff = (Yk - Xk) / math.log(m)
     return 1 / diff
+
+def compute_hessian(model, dataset, criterion):
+    loader = torch.utils.data.DataLoader(dataset, batch_size=500)
+
+    n = sum(p.numel() for p in model.parameters())
+    h = torch.zeros(n, n, device=device)
+
+    for i, (data, target) in enumerate(loader):
+        data, target = data.to(device), target.to(device)
+
+        output = model(data)
+        loss = criterion(output, target, reduction='sum') / len(dataset)
+ 
+        hessian(loss, model.parameters(), out=h) 
+
+    eigenvalues, eigenvector = torch.symeig(h)
+
+    return h, eigenvalues, eigenvector
+    

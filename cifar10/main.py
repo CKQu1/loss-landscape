@@ -181,9 +181,9 @@ if __name__ == '__main__':
     parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
     parser.add_argument('--lr_decay', default=0.1, type=float, help='learning rate decay rate')
     parser.add_argument('--optimizer', default='sgd', help='optimizer: sgd | adam')
-    parser.add_argument('--weight_decay', default=0.0005, type=float)
-    parser.add_argument('--momentum', default=0.9, type=float)
-    parser.add_argument('--epochs', default=5000, type=int, metavar='N', help='number of total epochs to run')
+    parser.add_argument('--weight_decay', default=0, type=float)#0.0005
+    parser.add_argument('--momentum', default=0, type=float)#0.9
+    parser.add_argument('--epochs', default=3000, type=int, metavar='N', help='number of total epochs to run')
     parser.add_argument('--save', default='trained_nets',help='path to save trained nets')
     parser.add_argument('--save_epoch', default=10, type=int, help='save every save_epochs')
     parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
@@ -333,20 +333,19 @@ if __name__ == '__main__':
             torch.save(state, 'trained_nets/' + save_folder + '/model_' + str(epoch) + '.t7')
             torch.save(opt_state, 'trained_nets/' + save_folder + '/opt_state_' + str(epoch) + '.t7')
 
-            # save grandient noise for saving memory
-            sio.savemat('trained_nets/' + save_folder + '/' + args.model + '_gradient_noise.mat',
-                        mdict={'train_noise_norm' + str(epoch): noise_norm_history_TRAIN,'weight_grad_history' + str(epoch): weight_grad_history},
-                        appendmat=True) 
-            weight_grad_history = []            
-            noise_norm_history_TRAIN = []           
+            # calculate Hessian
+            h, eigenvalues, eigenvector = compute_hessian(model, dataset, criterion)  
+            sio.savemat('trained_nets/' + save_folder + '/' + args.model + str(epoch) + '_hessian.mat',
+                        mdict={'hessian': h,'eigenvalues': eigenvalues,'eigenvector': eigenvector}
+                        )       
 
-        if int(epoch) == 150 or int(epoch) == 225 or int(epoch) == 275:
-            lr *= args.lr_decay
-            for param_group in optimizer.param_groups:
-                param_group['lr'] *= args.lr_decay
+        # if int(epoch) == 150 or int(epoch) == 225 or int(epoch) == 275:
+        #     lr *= args.lr_decay
+        #     for param_group in optimizer.param_groups:
+        #         param_group['lr'] *= args._lr_decay
 
     f.close()
 
     sio.savemat('trained_nets/' + save_folder + '/' + args.model + '_gradient_noise.mat',
-                        mdict={'training_history': training_history,'testing_history': testing_history},
-                        appendmat=True)
+                        mdict={'training_history': training_history,'testing_history': testing_history,'train_noise_norm': noise_norm_history_TRAIN,'weight_grad_history': weight_grad_history},
+                        )
