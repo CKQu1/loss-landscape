@@ -18,7 +18,7 @@ import torch.nn.parallel
 import cifar10.model_loader as model_loader
 from cifar10.dataloader import get_data_loaders
 
-from cifar10.gradient_noise import get_layerWise_norms, get_grads, alpha_estimator, alpha_estimator2
+from cifar10.gradient_noise import get_layerWise_norms, get_grads, alpha_estimator, alpha_estimator2, compute_hessian
 
 def init_params(net):
     for m in net.modules():
@@ -183,7 +183,7 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer', default='sgd', help='optimizer: sgd | adam')
     parser.add_argument('--weight_decay', default=0, type=float)#0.0005
     parser.add_argument('--momentum', default=0, type=float)#0.9
-    parser.add_argument('--epochs', default=3000, type=int, metavar='N', help='number of total epochs to run')
+    parser.add_argument('--epochs', default=5000, type=int, metavar='N', help='number of total epochs to run')
     parser.add_argument('--save', default='trained_nets',help='path to save trained nets')
     parser.add_argument('--save_epoch', default=10, type=int, help='save every save_epochs')
     parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
@@ -234,7 +234,7 @@ if __name__ == '__main__':
 
     f = open('trained_nets/' + save_folder + '/log.out', 'a')
 
-    trainloader, testloader = get_data_loaders(args)
+    trainloader, testloader, trainset = get_data_loaders(args)
 
     if args.label_corrupt_prob and not args.resume_model:
         torch.save(trainloader, 'trained_nets/' + save_folder + '/trainloader.dat')
@@ -334,10 +334,10 @@ if __name__ == '__main__':
             torch.save(opt_state, 'trained_nets/' + save_folder + '/opt_state_' + str(epoch) + '.t7')
 
             # calculate Hessian
-            h, eigenvalues, eigenvector = compute_hessian(model, dataset, criterion)  
-            sio.savemat('trained_nets/' + save_folder + '/' + args.model + str(epoch) + '_hessian.mat',
-                        mdict={'hessian': h,'eigenvalues': eigenvalues,'eigenvector': eigenvector}
-                        )       
+            #h, eigenvalues, eigenvector = compute_hessian(net, trainset, criterion)  
+            #sio.savemat('trained_nets/' + save_folder + '/' + args.model + str(epoch) + '_hessian.mat',
+            #           mdict={'hessian': h,'eigenvalues': eigenvalues,'eigenvector': eigenvector}
+            #           )       
 
         # if int(epoch) == 150 or int(epoch) == 225 or int(epoch) == 275:
         #     lr *= args.lr_decay
