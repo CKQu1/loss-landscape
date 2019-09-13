@@ -33,8 +33,9 @@ if __name__ == '__main__':
     # data parameters
     parser.add_argument('--dataset', default='cifar10', help='cifar10 | imagenet')
     # model parameters
-    parser.add_argument('--model', default='resnet56', help='model name')
-    parser.add_argument('--max_epoch', default='500', help='maximum epoch')
+    parser.add_argument('--model', default='resnet56_noshort', help='model name')
+    parser.add_argument('--max_epoch', type=int, default=500, help='maximum epoch')
+    parser.add_argument('--step', type=int, default=1, help='epoch step')
     args = parser.parse_args()
 
 
@@ -42,12 +43,15 @@ if __name__ == '__main__':
     # Load models and extract parameters
     #--------------------------------------------------------------------------
     all_weights = []
-    for i in range(arg.max_epoch+1):
+    for i in range(args.max_epoch+1,args.step):
         model_file = 'model_' + str(i) + '.t7'
         net = model_loader.load(args.dataset, args.model, model_file)
         w = net_plotter.get_weights(net) # initial parameters
         #s = copy.deepcopy(net.state_dict()) # deepcopy since state_dict are references
-        #import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()        
+        for j in range(len(w)):
+            w[j] = w[j].numpy()
+
         all_weights.append(w)
 
     sio.savemat(args.model + 'all_weights.mat',
