@@ -15,6 +15,8 @@ import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import torch.nn.parallel
 
+import model_loader as ml
+
 import cifar10.model_loader as model_loader
 from cifar10.dataloader import get_data_loaders
 
@@ -356,7 +358,7 @@ if __name__ == '__main__':
     all_weights = []
     for i in range(0,args.epochs+1,args.save_epoch):
         model_file = 'model_' + str(i) + '.t7'
-        net = model_loader.load('cifar10', args.model, model_file)
+        net = ml.load('cifar10', args.model, model_file)
         w = net_plotter.get_weights(net) # initial parameters
         #s = copy.deepcopy(net.state_dict()) # deepcopy since state_dict are references
         #import pdb; pdb.set_trace()        
