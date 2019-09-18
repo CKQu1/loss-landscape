@@ -115,8 +115,17 @@ def alexnet():
     return AlexNet(ch=64, num_classes=10)
 
 
-def fc(**kwargs):
+def fc3(**kwargs):
     return FullyConnected(input_dim=32*32*3, width=100, depth=3, num_classes=10)
+
+def fc20(**kwargs):
+    return FullyConnected(input_dim=32*32*3, width=100, depth=20, num_classes=10)
+
+def fc56(**kwargs):
+    return FullyConnected(input_dim=32*32*3, width=100, depth=56, num_classes=10)
+
+def fc110(**kwargs):
+    return FullyConnected(input_dim=32*32*3, width=100, depth=110, num_classes=10)
 
 def simplenet(**kwargs):
     return SimpleNet(**kwargs)

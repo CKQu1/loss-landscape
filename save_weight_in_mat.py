@@ -43,7 +43,7 @@ if __name__ == '__main__':
     # Load models and extract parameters
     #--------------------------------------------------------------------------
     all_weights = []
-    for i in range(args.max_epoch+1,args.step):
+    for i in range(0,args.max_epoch+1,args.step):
         model_file = 'model_' + str(i) + '.t7'
         net = model_loader.load(args.dataset, args.model, model_file)
         w = net_plotter.get_weights(net) # initial parameters

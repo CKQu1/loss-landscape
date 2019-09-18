@@ -349,3 +349,22 @@ if __name__ == '__main__':
     sio.savemat('trained_nets/' + save_folder + '/' + args.model + '_gradient_noise.mat',
                         mdict={'training_history': training_history,'testing_history': testing_history,'train_noise_norm': noise_norm_history_TRAIN,'weight_grad_history': weight_grad_history},
                         )
+
+    #--------------------------------------------------------------------------
+    # Load weights and save them in a mat file
+    #--------------------------------------------------------------------------
+    all_weights = []
+    for i in range(0,args.epochs+1,args.save_epoch):
+        model_file = 'model_' + str(i) + '.t7'
+        net = model_loader.load(args.dataset, args.model, model_file)
+        w = net_plotter.get_weights(net) # initial parameters
+        #s = copy.deepcopy(net.state_dict()) # deepcopy since state_dict are references
+        #import pdb; pdb.set_trace()        
+        for j in range(len(w)):
+            w[j] = w[j].numpy()
+
+        all_weights.append(w)
+
+    sio.savemat(args.model + 'all_weights.mat',
+                            mdict={'weight': all_weights},
+                            )
