@@ -357,7 +357,7 @@ if __name__ == '__main__':
     #--------------------------------------------------------------------------
     all_weights = []
     for i in range(0,args.epochs+1,args.save_epoch):
-        model_file = 'model_' + str(i) + '.t7'
+        model_file = 'trained_nets/' + save_folder + '/' + 'model_' + str(i) + '.t7'
         net = ml.load('cifar10', args.model, model_file)
         w = net_plotter.get_weights(net) # initial parameters
         #s = copy.deepcopy(net.state_dict()) # deepcopy since state_dict are references
@@ -367,6 +367,6 @@ if __name__ == '__main__':
 
         all_weights.append(w)
 
-    sio.savemat(args.model + 'all_weights.mat',
+    sio.savemat('trained_nets/' + save_folder + '/' + args.model + 'all_weights.mat',
                             mdict={'weight': all_weights},
                             )
