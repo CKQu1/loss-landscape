@@ -16,6 +16,7 @@ from torch.autograd import Variable
 import torch.nn.parallel
 
 import model_loader as ml
+import net_plotter
 
 import cifar10.model_loader as model_loader
 from cifar10.dataloader import get_data_loaders
