@@ -116,7 +116,7 @@ def alexnet():
 
 
 def fc(**kwargs):
-    return FullyConnected(width=100, depth=3, num_classes=10)
+    return FullyConnected(width=128, depth=3, num_classes=10)
 
 def simplenet(**kwargs):
     return SimpleNet(**kwargs)
