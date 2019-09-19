@@ -10,3 +10,14 @@ python plot_surface.py --cuda --model resnet56_noshort --proj_file /project/cort
 
 #hessian
 python plot_hessian_eigen.py --cuda --threads=4 
+
+
+
+
+python plot_trajectory.py --model resnet56 --model_folder ./trained_nets/resnet56_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+python plot_trajectory.py --model resnet110_noshort --model_folder ./trained_nets/resnet110_noshort_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+
+python plot_trajectory.py --model resnet110 --model_folder ./trained_nets/resnet110_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+
+python plot_trajectory.py --model resnet20_noshort --model_folder ./trained_nets/resnet20_noshort_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+python plot_trajectory.py --model alex --model_folder ./trained_nets/alex_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1500 --ignore biasbn
