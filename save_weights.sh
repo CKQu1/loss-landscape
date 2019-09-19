@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -P THAP 
-#PBS -N plot_land
+#PBS -N save_weight
 #PBS -q defaultQ 
 #PBS -l select=1:ncpus=1:mem=8gb
 #PBS -l walltime=1:59:59
