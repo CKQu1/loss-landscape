@@ -3,7 +3,7 @@
 #PBS -N land_noise
 #PBS -q defaultQ 
 #PBS -l select=1:ncpus=1:ngpus=1:mem=16gb
-#PBS -l walltime=17:59:59
+#PBS -l walltime=167:59:59
 #PBS -e PBSout/
 #PBS -o PBSout/
 ##PBS -J 1-30
@@ -22,10 +22,12 @@ cd "$PBS_O_WORKDIR"
 #python3 main.py --patch_size=13 --num_patches=1 --loc_hidden=256 --glimpse_hidden=128 --num_glimpses=10 --valid_size=0.1 --batch_size=256 --batchnorm_flag_phi=True --batchnorm_flag_l=True --batchnorm_flag_g=True --batchnorm_flag_h=True --glimpse_scale=1 --weight_decay=0.002 --dropout_phi=0.2 --dropout_l=0.3 --dropout_g=0.2 --dropout_h=0.3 --use_gpu=False --dataset_name='CIFAR' --train_patience=50 --epochs=500
 
 #--batch_szie= --loc_hidden=192 --hidden_size=320 --glimpse_hidden= --num_glimpse= --glimpse_scale= --loss_fun_action= --loss_fun_baseline= 
-#python -m cifar10.main --model='resnet20_noshort' --epochs=500 --save_epoch=1 --batch_size=1024
-#python -m cifar10.main --model='resnet56_noshort' --epochs=500 --save_epoch=1 --batch_size=1024
-#python -m cifar10.main --model='resnet110_noshort' --epochs=500 --save_epoch=1 --batch_size=1024
-python -m cifar10.main --model='resnet20' --epochs=500 --save_epoch=1 --batch_size=128
-#python -m cifar10.main --model='resnet56' --epochs=500 --save_epoch=1 --batch_size=1024
-#python -m cifar10.main --model='resnet110' --epochs=500 --save_epoch=1 --batch_size=1024
-#python -m cifar10.main --model='alex' --epochs=1500 --save_epoch=1 --batch_size=1024
+python -m cifar10.main --model='resnet20_noshort' --epochs=500 --save_epoch=1 --batch_size=512
+python -m cifar10.main --model='resnet56_noshort' --epochs=500 --save_epoch=1 --batch_size=512
+python -m cifar10.main --model='resnet110_noshort' --epochs=500 --save_epoch=1 --batch_size=512
+python -m cifar10.main --model='resnet110_noshort' --epochs=500 --save_epoch=1 --batch_size=256
+python -m cifar10.main --model='resnet20' --epochs=500 --save_epoch=1 --batch_size=512
+python -m cifar10.main --model='resnet56' --epochs=500 --save_epoch=1 --batch_size=512
+python -m cifar10.main --model='resnet110' --epochs=500 --save_epoch=1 --batch_size=512
+python -m cifar10.main --model='resnet110' --epochs=500 --save_epoch=1 --batch_size=256
+python -m cifar10.main --model='alex' --epochs=1500 --save_epoch=1 --batch_size=512
