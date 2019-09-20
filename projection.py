@@ -171,7 +171,6 @@ def project_trajectory(dir_file, w, s, dataset, model_name, model_files,
     f = h5py.File(proj_file, 'w')
     f['proj_xcoord'] = np.array(xcoord)
     f['proj_ycoord'] = np.array(ycoord)
-    import pdb;pdb.set_trace()
     f.close()
 
     return proj_file
