@@ -216,6 +216,21 @@ def ResNet152_noshort():
     return ResNet(Bottleneck_noshortcut, [3,8,36,3])
 
 # CIFAR-10 models
+def ResNet14():
+    depth = 14
+    n = (depth - 2) // 6
+    return ResNet_cifar(BasicBlock, [n,n,n])
+
+def ResNet14_noshort():
+    depth = 14
+    n = (depth - 2) // 6
+    return ResNet_cifar(BasicBlock_noshortcut, [n,n,n])
+
+def ResNet20():
+    depth = 20
+    n = (depth - 2) // 6
+    return ResNet_cifar(BasicBlock, [n,n,n])
+
 def ResNet20():
     depth = 20
     n = (depth - 2) // 6
