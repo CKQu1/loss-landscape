@@ -23,36 +23,33 @@ cd "$PBS_O_WORKDIR"
 
 #--batch_szie= --loc_hidden=192 --hidden_size=320 --glimpse_hidden= --num_glimpse= --glimpse_scale= --loss_fun_action= --loss_fun_baseline=
 
-python plot_surface.py --cuda --model fc20 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/fc20_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_1300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
+python plot_surface.py --cuda --model resnet56 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet56_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
-python plot_surface.py --cuda --model fc56 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/fc56_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_1300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
+python plot_surface.py --cuda --model resnet56_noshort --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet56_noshort_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
-python plot_surface.py --cuda --model fc110 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/fc110_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_1300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
+python plot_surface.py --cuda --model resnet110 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet110_sgd_lr\=0.1_bs\=256_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
-python plot_surface.py --cuda --model resnet56 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet56_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
+python plot_surface.py --cuda --model resnet110_noshort --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet110_noshort_sgd_lr\=0.1_bs\=256_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
-python plot_surface.py --cuda --model resnet56_noshort --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet56_noshort_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
+python plot_surface.py --cuda --model alex --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/alex_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/model_1300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
-python plot_surface.py --cuda --model resnet110 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet110_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
-
-python plot_surface.py --cuda --model resnet110_noshort --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet110_noshort_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
+python plot_surface.py --cuda --model alex --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/alex_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/model_1300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
 
-python plot_trajectory.py --cuda --model resnet56_noshort --model_folder ./trained_nets/resnet56_noshort_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
 
-python plot_trajectory.py --cuda --model resnet56 --model_folder ./trained_nets/resnet56_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+python plot_trajectory.py --cuda --model resnet56_noshort --model_folder ./trained_nets/resnet56_noshort_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
 
-python plot_trajectory.py --cuda --model resnet110_noshort --model_folder ./trained_nets/resnet110_noshort_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+python plot_trajectory.py --cuda --model resnet56 --model_folder ./trained_nets/resnet56_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
 
-python plot_trajectory.py --cuda --model resnet110 --model_folder ./trained_nets/resnet110_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+python plot_trajectory.py --cuda --model resnet110_noshort --model_folder ./trained_nets/resnet110_noshort_sgd_lr\=0.1_bs\=256_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
 
-python plot_trajectory.py --cuda --model fc3 --model_folder ./trained_nets/fc3_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
+python plot_trajectory.py --cuda --model resnet110 --model_folder ./trained_nets/resnet110_sgd_lr\=0.1_bs\=256_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
 
-python plot_trajectory.py --cuda --model fc20 --model_folder ./trained_nets/fc20_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
+python plot_trajectory.py --cuda --model alex --model_folder ./trained_nets/alex_noshort_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
 
-python plot_trajectory.py --cuda --model fc56 --model_folder ./trained_nets/fc56_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
+python plot_trajectory.py --cuda --model alex --model_folder ./trained_nets/alex_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
 
-python plot_trajectory.py --cuda --model fc110 --model_folder ./trained_nets/fc110_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
+
 
 
 #python plot_surface.py --cuda --model alex --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/alex_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
