@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -P THAP 
+#PBS -P cortical 
 #PBS -N land_noise
 #PBS -q defaultQ 
 #PBS -l select=1:ncpus=1:ngpus=1:mem=16gb
