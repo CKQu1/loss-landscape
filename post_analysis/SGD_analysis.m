@@ -1,15 +1,15 @@
 % calculate the statistical property of SGD walk
 function SGD_analysis(varargin)
 % read in data
-d = dir('*net*');
-calculate = 0;
+d = dir('*epoch*');
+calculate = 1;
 
 % Loop number for PBS array job
 loop_num = 0;
     
 for ii = 1:length(d)
     GN_dir = dir(fullfile(d(ii).folder,d(ii).name,'*gradient_noise*mat'));
-    
+    output_dir = dir(fullfile(d(ii).folder,d(ii).name,'*datax*mat')); 
     % For PBS array job
     loop_num = loop_num + 1;
     if nargin ~= 0
@@ -19,7 +19,7 @@ for ii = 1:length(d)
         end
     end
     
-    if isempty(GN_dir)
+    if isempty(GN_dir) | ~isempty(output_dir)
         continue
     end
     if calculate
@@ -231,6 +231,7 @@ for ii = 1:length(d)
     
     saveas(gcf,fullfile(GN_dir.folder,[d(ii).name,'_plot.fig']))
     saveas(gcf,fullfile(GN_dir.folder,[d(ii).name,'_plot.svg']))
+    saveas(gcf,fullfile(GN_dir.folder,[d(ii).name,'_plot.jpg']))
 end
 end
 
