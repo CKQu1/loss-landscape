@@ -23,19 +23,19 @@ cd "$PBS_O_WORKDIR"
 
 #--batch_szie= --loc_hidden=192 --hidden_size=320 --glimpse_hidden= --num_glimpse= --glimpse_scale= --loss_fun_action= --loss_fun_baseline= 
 
-python -m cifar10.main --model='resnet14_noshort' --epochs=500 --save_epoch=1 --batch_size=1024
-python -m cifar10.main --model='resnet14' --epochs=500 --save_epoch=1 --batch_size=1024
+python -m cifar10.main --model='fc20' --epochs=1500 --save_epoch=1 --batch_size=128
+python -m cifar10.main --model='fc56' --epochs=1500 --save_epoch=1 --batch_size=128
 
-python -m cifar10.main --model='resnet14_noshort' --epochs=500 --save_epoch=1 --batch_size=128
-python -m cifar10.main --model='resnet14' --epochs=500 --save_epoch=1 --batch_size=128
+#python -m cifar10.main --model='resnet14_noshort' --epochs=500 --save_epoch=1 --batch_size=128
+#python -m cifar10.main --model='resnet14' --epochs=500 --save_epoch=1 --batch_size=128
 
-python plot_surface.py --cuda --model resnet14 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet14_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
+python plot_surface.py --cuda --model fc20 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/fc20_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_1300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
-python plot_surface.py --cuda --model resnet14_noshort --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet14_noshort_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
+python plot_surface.py --cuda --model fc56 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/fc56_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_1300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
 
-python plot_trajectory.py --cuda --model resnet14_noshort --model_folder ./trained_nets/resnet56_noshort_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+python plot_trajectory.py --cuda --model fc20 --model_folder ./trained_nets/fc20_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
 
-python plot_trajectory.py --cuda --model resnet14 --model_folder ./trained_nets/resnet56_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
+python plot_trajectory.py --cuda --model fc56 --model_folder ./trained_nets/fc56_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
 
 
