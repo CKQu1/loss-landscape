@@ -45,6 +45,8 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
     total = 0
 
     grads = []
+    sub_loss = []
+    sub_weights = []
 
     if isinstance(criterion, nn.CrossEntropyLoss):
         for batch_idx, (inputs, targets) in enumerate(trainloader):
@@ -63,6 +65,15 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
             grads.append(grad)
 
             optimizer.step()
+
+            # record tiny steps in every epoch
+            sub_loss.append(loss.item())
+            w = net_plotter.get_weights(net) # initial parameters
+            import pdb; pdb.set_trace()        
+            for j in range(len(w)):
+                w[j] = w[j].numpy()
+            sub_weights.append(w)
+
             train_loss += loss.item()*batch_size
             _, predicted = torch.max(outputs.data, 1)
             correct += predicted.eq(targets.data).cpu().sum().item()
@@ -87,6 +98,15 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
             grads.append(grad)
 
             optimizer.step()
+
+            # record tiny steps in every epoch
+            sub_loss.append(loss.item())
+            w = net_plotter.get_weights(net) # initial parameters
+            import pdb; pdb.set_trace()        
+            for j in range(len(w)):
+                w[j] = w[j].numpy()
+            sub_weights.append(w)
+
             train_loss += loss.item()*batch_size
             _, predicted = torch.max(outputs.data, 1)
             correct += predicted.cpu().eq(targets).cpu().sum().item()
@@ -110,9 +130,9 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
 
     w,g = get_layerWise_norms(net)
 
-    layerWise_norms = [w,g]
+    layerWise_norms = [w,g]  
 
-    return train_loss/total, 100 - 100.*correct/total, hist_noise, layerWise_norms
+    return train_loss/total, 100 - 100.*correct/total, hist_noise, layerWise_norms, sub_weights, sub_loss
 
 
 def test(testloader, net, criterion, use_cuda=True):
@@ -120,6 +140,8 @@ def test(testloader, net, criterion, use_cuda=True):
     test_loss = 0
     correct = 0
     total = 0
+
+    sub_loss = []
 
     if isinstance(criterion, nn.CrossEntropyLoss):
         for batch_idx, (inputs, targets) in enumerate(testloader):
@@ -131,6 +153,7 @@ def test(testloader, net, criterion, use_cuda=True):
             inputs, targets = Variable(inputs), Variable(targets)
             outputs = net(inputs)
             loss = criterion(outputs, targets)
+            sub_loss.append(loss.item())
             test_loss += loss.item()*batch_size
             _, predicted = torch.max(outputs.data, 1)
             correct += predicted.eq(targets.data).cpu().sum().item()
@@ -148,11 +171,12 @@ def test(testloader, net, criterion, use_cuda=True):
             inputs, one_hot_targets = Variable(inputs), Variable(one_hot_targets)
             outputs = F.softmax(net(inputs))
             loss = criterion(outputs, one_hot_targets)
+            sub_loss.append(loss.item())
             test_loss += loss.item()*batch_size
             _, predicted = torch.max(outputs.data, 1)
             correct += predicted.cpu().eq(targets).cpu().sum().item()
 
-    return test_loss/total, 100 - 100.*correct/total
+    return test_loss/total, 100 - 100.*correct/total, sub_loss
 
 def name_save_folder(args):
     save_folder = args.model + '_' + str(args.optimizer) + '_lr=' + str(args.lr)
@@ -305,8 +329,13 @@ if __name__ == '__main__':
 
     for epoch in range(start_epoch, args.epochs + 1):
         print(epoch)
-        loss, train_err, hist_noise, layerWise_norms = train(trainloader, net, criterion, optimizer, use_cuda)
-        test_loss, test_err = test(testloader, net, criterion, use_cuda)
+        loss, train_err, hist_noise, layerWise_norms, sub_weights, sub_loss = train(trainloader, net, criterion, optimizer, use_cuda)
+        test_loss, test_err, test_sub_loss = test(testloader, net, criterion, use_cuda)
+
+        # save loss and weights in each tiny step in every epoch
+        sio.savemat('trained_nets/' + save_folder + '/model_' + str(epoch) + '_sub_loss_w.mat',
+                            mdict={'sub_weights': sub_weights,'sub_loss': sub_loss, 'test_sub_loss': test_sub_loss},
+                            )
 
         status = 'e: %d loss: %.5f train_err: %.3f test_top1: %.3f test_loss %.5f \n' % (epoch, loss, train_err, test_err, test_loss)
         print(status)
