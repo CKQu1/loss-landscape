@@ -59,17 +59,14 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
             outputs = net(inputs)
             loss = criterion(outputs, targets)
             loss.backward()
-
             # get gradient
             grad = get_grads(net).cpu()
             grads.append(grad)
-
             optimizer.step()
 
             # record tiny steps in every epoch
             sub_loss.append(loss.item())
             w = net_plotter.get_weights(net) # initial parameters
-            import pdb; pdb.set_trace()        
             for j in range(len(w)):
                 w[j] = w[j].numpy()
             sub_weights.append(w)
@@ -101,8 +98,8 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
 
             # record tiny steps in every epoch
             sub_loss.append(loss.item())
+            import pdb; pdb.set_trace()
             w = net_plotter.get_weights(net) # initial parameters
-            import pdb; pdb.set_trace()        
             for j in range(len(w)):
                 w[j] = w[j].numpy()
             sub_weights.append(w)
@@ -303,8 +300,8 @@ if __name__ == '__main__':
 
     # record the performance of initial model
     if not args.resume_model:
-        train_loss, train_err = test(trainloader, net, criterion, use_cuda)
-        test_loss, test_err = test(testloader, net, criterion, use_cuda)
+        train_loss, train_err,_ = test(trainloader, net, criterion, use_cuda)
+        test_loss, test_err,_ = test(testloader, net, criterion, use_cuda)
         status = 'e: %d loss: %.5f train_err: %.3f test_top1: %.3f test_loss %.5f \n' % (0, train_loss, train_err, test_err, test_loss)
         print(status)
         f.write(status)
