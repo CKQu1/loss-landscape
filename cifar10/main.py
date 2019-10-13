@@ -37,8 +37,8 @@ def init_params(net):
             if m.bias is not None:
                 init.constant_(m.bias, 0)
 
-# Training
-def train(trainloader, net, criterion, optimizer, use_cuda=True):
+# Training with save all transient state in one epoch
+def train_save(trainloader, net, criterion, optimizer, use_cuda=True):
     net.train()
     train_loss = 0
     correct = 0
@@ -68,7 +68,7 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
             sub_loss.append(loss.item())
             w = net_plotter.get_weights(net) # initial parameters
             for j in range(len(w)):
-                w[j] = w[j].numpy()
+                w[j] = w[j].cpu().numpy()
             sub_weights.append(w)
 
             train_loss += loss.item()*batch_size
@@ -101,7 +101,7 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
             import pdb; pdb.set_trace()
             w = net_plotter.get_weights(net) # initial parameters
             for j in range(len(w)):
-                w[j] = w[j].numpy()
+                w[j] = w[j].cpu().numpy()
             sub_weights.append(w)
 
             train_loss += loss.item()*batch_size
@@ -132,7 +132,7 @@ def train(trainloader, net, criterion, optimizer, use_cuda=True):
     return train_loss/total, 100 - 100.*correct/total, hist_noise, layerWise_norms, sub_weights, sub_loss
 
 
-def test(testloader, net, criterion, use_cuda=True):
+def test_save(testloader, net, criterion, use_cuda=True):
     net.eval()
     test_loss = 0
     correct = 0
@@ -174,6 +174,123 @@ def test(testloader, net, criterion, use_cuda=True):
             correct += predicted.cpu().eq(targets).cpu().sum().item()
 
     return test_loss/total, 100 - 100.*correct/total, sub_loss
+
+# Training without save all transient state in one epoch
+def train(trainloader, net, criterion, optimizer, use_cuda=True):
+    net.train()
+    train_loss = 0
+    correct = 0
+    total = 0
+
+    grads = []    
+
+    if isinstance(criterion, nn.CrossEntropyLoss):
+        for batch_idx, (inputs, targets) in enumerate(trainloader):
+            batch_size = inputs.size(0)
+            total += batch_size
+            if use_cuda:
+                inputs, targets = inputs.cuda(), targets.cuda()
+            optimizer.zero_grad()
+            inputs, targets = Variable(inputs), Variable(targets)
+            outputs = net(inputs)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            # get gradient
+            grad = get_grads(net).cpu()
+            grads.append(grad)
+            optimizer.step()
+
+            train_loss += loss.item()*batch_size
+            _, predicted = torch.max(outputs.data, 1)
+            correct += predicted.eq(targets.data).cpu().sum().item()
+
+    elif isinstance(criterion, nn.MSELoss):
+        for batch_idx, (inputs, targets) in enumerate(trainloader):
+            batch_size = inputs.size(0)
+            total += batch_size
+
+            one_hot_targets = torch.FloatTensor(batch_size, 10).zero_()
+            one_hot_targets = one_hot_targets.scatter_(1, targets.view(batch_size, 1), 1.0)
+            one_hot_targets = one_hot_targets.float()
+            if use_cuda:
+                inputs, one_hot_targets = inputs.cuda(), one_hot_targets.cuda()
+            inputs, one_hot_targets = Variable(inputs), Variable(one_hot_targets)
+            outputs = F.softmax(net(inputs))
+            loss = criterion(outputs, one_hot_targets)
+            loss.backward()
+
+            # get gradient
+            grad = get_grads(net).cpu()
+            grads.append(grad)
+
+            optimizer.step()            
+
+            train_loss += loss.item()*batch_size
+            _, predicted = torch.max(outputs.data, 1)
+            correct += predicted.cpu().eq(targets).cpu().sum().item()
+
+    M = len(grads[0]) # total number of parameters
+    grads = torch.cat(grads).view(-1, M)
+    mean_grad = grads.sum(0) / (batch_idx + 1) # divided by # batchs
+    noise_norm = (grads - mean_grad).norm(dim=1)
+    
+    N = M * (batch_idx + 1) 
+
+    for i in range(1, 1 + int(math.sqrt(N))):
+        if N%i == 0:
+            m = i
+    alpha = alpha_estimator(m, (grads - mean_grad).view(-1, 1))
+    
+    del grads
+    del mean_grad
+
+    hist_noise = [noise_norm.numpy(), alpha.numpy()]
+
+    w,g = get_layerWise_norms(net)
+
+    layerWise_norms = [w,g]  
+
+    return train_loss/total, 100 - 100.*correct/total, hist_noise, layerWise_norms
+
+
+def test(testloader, net, criterion, use_cuda=True):
+    net.eval()
+    test_loss = 0
+    correct = 0
+    total = 0
+
+    if isinstance(criterion, nn.CrossEntropyLoss):
+        for batch_idx, (inputs, targets) in enumerate(testloader):
+            batch_size = inputs.size(0)
+            total += batch_size
+
+            if use_cuda:
+                inputs, targets = inputs.cuda(), targets.cuda()
+            inputs, targets = Variable(inputs), Variable(targets)
+            outputs = net(inputs)
+            loss = criterion(outputs, targets)
+            test_loss += loss.item()*batch_size
+            _, predicted = torch.max(outputs.data, 1)
+            correct += predicted.eq(targets.data).cpu().sum().item()
+
+    elif isinstance(criterion, nn.MSELoss):
+        for batch_idx, (inputs, targets) in enumerate(testloader):
+            batch_size = inputs.size(0)
+            total += batch_size
+
+            one_hot_targets = torch.FloatTensor(batch_size, 10).zero_()
+            one_hot_targets = one_hot_targets.scatter_(1, targets.view(batch_size, 1), 1.0)
+            one_hot_targets = one_hot_targets.float()
+            if use_cuda:
+                inputs, one_hot_targets = inputs.cuda(), one_hot_targets.cuda()
+            inputs, one_hot_targets = Variable(inputs), Variable(one_hot_targets)
+            outputs = F.softmax(net(inputs))
+            loss = criterion(outputs, one_hot_targets)
+            test_loss += loss.item()*batch_size
+            _, predicted = torch.max(outputs.data, 1)
+            correct += predicted.cpu().eq(targets).cpu().sum().item()
+
+    return test_loss/total, 100 - 100.*correct/total
 
 def name_save_folder(args):
     save_folder = args.model + '_' + str(args.optimizer) + '_lr=' + str(args.lr)
@@ -300,8 +417,8 @@ if __name__ == '__main__':
 
     # record the performance of initial model
     if not args.resume_model:
-        train_loss, train_err,_ = test(trainloader, net, criterion, use_cuda)
-        test_loss, test_err,_ = test(testloader, net, criterion, use_cuda)
+        train_loss, train_err = test(trainloader, net, criterion, use_cuda)
+        test_loss, test_err = test(testloader, net, criterion, use_cuda)
         status = 'e: %d loss: %.5f train_err: %.3f test_top1: %.3f test_loss %.5f \n' % (0, train_loss, train_err, test_err, test_loss)
         print(status)
         f.write(status)
@@ -325,14 +442,20 @@ if __name__ == '__main__':
     noise_norm_history_TRAIN = []
 
     for epoch in range(start_epoch, args.epochs + 1):
-        print(epoch)
-        loss, train_err, hist_noise, layerWise_norms, sub_weights, sub_loss = train(trainloader, net, criterion, optimizer, use_cuda)
-        test_loss, test_err, test_sub_loss = test(testloader, net, criterion, use_cuda)
+        print(epoch)        
 
-        # save loss and weights in each tiny step in every epoch
-        sio.savemat('trained_nets/' + save_folder + '/model_' + str(epoch) + '_sub_loss_w.mat',
-                            mdict={'sub_weights': sub_weights,'sub_loss': sub_loss, 'test_sub_loss': test_sub_loss},
-                            )
+        # Save checkpoint.
+        if epoch == 1 or epoch % args.save_epoch == 0 or epoch == 150:
+            loss, train_err, hist_noise, layerWise_norms, sub_weights, sub_loss = train_save(trainloader, net, criterion, optimizer, use_cuda)
+            test_loss, test_err, test_sub_loss = test_save(testloader, net, criterion, use_cuda)
+
+            # save loss and weights in each tiny step in every epoch
+            sio.savemat('trained_nets/' + save_folder + '/model_' + str(epoch) + '_sub_loss_w.mat',
+                                mdict={'sub_weights': sub_weights,'sub_loss': sub_loss, 'test_sub_loss': test_sub_loss},
+                                )            
+        else:
+            loss, train_err, hist_noise, layerWise_norms = train(trainloader, net, criterion, optimizer, use_cuda)
+            test_loss, test_err = test(testloader, net, criterion, use_cuda)
 
         status = 'e: %d loss: %.5f train_err: %.3f test_top1: %.3f test_loss %.5f \n' % (epoch, loss, train_err, test_err, test_loss)
         print(status)
@@ -348,25 +471,19 @@ if __name__ == '__main__':
         # grandient noise            
         noise_norm_history_TRAIN.append(hist_noise) 
 
-        # Save checkpoint.
-        if epoch == 1 or epoch % args.save_epoch == 0 or epoch == 150:
-            # for landscape
-            state = {
-                'acc': acc,
-                'epoch': epoch,
-                'state_dict': net.module.state_dict() if args.ngpu > 1 else net.state_dict(),
-            }
-            opt_state = {
-                'optimizer': optimizer.state_dict()
-            }
-            torch.save(state, 'trained_nets/' + save_folder + '/model_' + str(epoch) + '.t7')
-            torch.save(opt_state, 'trained_nets/' + save_folder + '/opt_state_' + str(epoch) + '.t7')
+        # save state for landscape on every epoch
+        state = {
+            'acc': acc,
+            'epoch': epoch,
+            'state_dict': net.module.state_dict() if args.ngpu > 1 else net.state_dict(),
+        }
+        opt_state = {
+            'optimizer': optimizer.state_dict()
+        }
+        torch.save(state, 'trained_nets/' + save_folder + '/model_' + str(epoch) + '.t7')
+        torch.save(opt_state, 'trained_nets/' + save_folder + '/opt_state_' + str(epoch) + '.t7')
 
-            # calculate Hessian
-            #h, eigenvalues, eigenvector = compute_hessian(net, trainset, criterion)  
-            #sio.savemat('trained_nets/' + save_folder + '/' + args.model + str(epoch) + '_hessian.mat',
-            #           mdict={'hessian': h,'eigenvalues': eigenvalues,'eigenvector': eigenvector}
-            #           )       
+                   
 
         # if int(epoch) == 150 or int(epoch) == 225 or int(epoch) == 275:
         #     lr *= args.lr_decay
@@ -380,7 +497,7 @@ if __name__ == '__main__':
                         )
 
     #--------------------------------------------------------------------------
-    # Load weights and save them in a mat file
+    # Load weights and save them in a mat file (temporal unit: epoch)
     #--------------------------------------------------------------------------
     all_weights = []
     for i in range(0,args.epochs+1,args.save_epoch):
@@ -390,7 +507,7 @@ if __name__ == '__main__':
         #s = copy.deepcopy(net.state_dict()) # deepcopy since state_dict are references
         #import pdb; pdb.set_trace()        
         for j in range(len(w)):
-            w[j] = w[j].numpy()
+            w[j] = w[j].cpu().numpy()
 
         all_weights.append(w)
 
