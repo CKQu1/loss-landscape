@@ -15,6 +15,7 @@ MFprocess = 3;
 
 
         data = h5read('model_500.t7_weights_xignore=biasbn_xnorm=filter_yignore=biasbn_ynorm=filter.h5_[-1.0,1.0,51]x[-1.0,1.0,51].h5','/train_loss');
+        data = reshape(data(randperm(numel(data))),51,51);
         N = length (data);
         figure (11111); clf
         surf (data)
