@@ -2,8 +2,8 @@
 #PBS -P THAP
 #PBS -N land_noise
 #PBS -q defaultQ 
-#PBS -l select=1:ncpus=1:ngpus=1:mem=16gb
-#PBS -l walltime=167:59:59
+#PBS -l select=1:ncpus=1:ngpus=1:mem=24gb
+#PBS -l walltime=67:59:59
 #PBS -e PBSout/
 #PBS -o PBSout/
 ##PBS -J 1-30
@@ -35,8 +35,8 @@ cd "$PBS_O_WORKDIR"
 #python -m cifar10.main --model='resnet56' --epochs=500  --batch_size=128
 #python -m cifar10.main --model='resnet56_noshort' --epochs=500  --batch_size=128
 
-#python -m cifar10.main --model='resnet110' --epochs=500  --batch_size=128
-#python -m cifar10.main --model='resnet110_noshort' --epochs=500  --batch_size=128
+python -m cifar10.main --model='resnet110' --epochs=500  --batch_size=128
+python -m cifar10.main --model='resnet110_noshort' --epochs=500  --batch_size=128
 
 
 #python -m cifar10.main --model='resnet56' --epochs=500  --batch_size=512
@@ -50,11 +50,11 @@ cd "$PBS_O_WORKDIR"
 #python -m cifar10.main --model='resnet56_noshort' --epochs=500  --batch_size=1024
 
 #python -m cifar10.main --model='resnet110' --epochs=500  --batch_size=256
-python -m cifar10.main --model='resnet110_noshort' --epochs=500  --batch_size=256
+#python -m cifar10.main --model='resnet110_noshort' --epochs=500  --batch_size=256
 
-python -m cifar10.main --model='alex' --epochs=500  --batch_size=128
-python -m cifar10.main --model='alex' --epochs=500  --batch_size=512
-python -m cifar10.main --model='alex' --epochs=500  --batch_size=1024
+#python -m cifar10.main --model='alex' --epochs=500  --batch_size=128
+#python -m cifar10.main --model='alex' --epochs=500  --batch_size=512
+#python -m cifar10.main --model='alex' --epochs=500  --batch_size=1024
 
 #python -m cifar10.main --model='resnet14_noshort' --epochs=500  --batch_size=128
 #python -m cifar10.main --model='resnet14' --epochs=500  --batch_size=128

@@ -21,27 +21,27 @@ function [MSD,tau,MSD_forcontour,contour_length,Displacement_all,Contour_length_
 T =  size(Trajectory,1); % T is the number of point in the trajectory;
 
 [ I, j ] = find(triu(ones(T), 1)); % list of indices of possible pairings
-D = zeros(T, T);
-% contour length pool
-D2 = zeros(T, T);
+% D = zeros(T, T);
+% % contour length pool
+% D2 = zeros(T, T);
 
 increment = diff(Trajectory(:,1:end-1));
 increment2 = [0;sqrt(sum(increment.^2,2,'omitnan'))];
 
-% non periodic boundary conditons
-try
-    D( I + T*(j-1) ) = (sum(abs( Trajectory(I,1:end-1) - Trajectory(j,1:end-1) ).^2, 2)); % Squared distance computation in one line !
-catch
-    % not enough memory
-    for ii = 1:length(I)
-        D( I(ii) + T*(j(ii)-1) ) = (sum(abs( Trajectory(I(ii),1:end-1) - Trajectory(j(ii),1:end-1) ).^2, 2));
-    end
-end
-
-for ii = 1:length(I)    
-    D2( I(ii) + T*(j(ii)-1) ) = sum(increment2(min(I(ii),j(ii)):max(I(ii),j(ii))),'omitnan');
-end
-
+% % non periodic boundary conditons
+% try
+%     D( I + T*(j-1) ) = (sum(abs( Trajectory(I,1:end-1) - Trajectory(j,1:end-1) ).^2, 2)); % Squared distance computation in one line !
+% catch
+%     % not enough memory
+%     for ii = 1:length(I)
+%         D( I(ii) + T*(j(ii)-1) ) = (sum(abs( Trajectory(I(ii),1:end-1) - Trajectory(j(ii),1:end-1) ).^2, 2));
+%     end
+% end
+% 
+% for ii = 1:length(I)    
+%     D2( I(ii) + T*(j(ii)-1) ) = sum(increment2(min(I(ii),j(ii)):max(I(ii),j(ii))),'omitnan');
+% end
+[D,D2] = msd_iteration_parfor_mex(Trajectory,increment2, T, uint32(I), uint32(j), 1);
 
 
 % Time intervals between the two points of each pairing :
