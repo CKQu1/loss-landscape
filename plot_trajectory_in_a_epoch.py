@@ -134,13 +134,11 @@ if __name__ == '__main__':
     parser.add_argument('--ignore', default='', help='ignore bias and BN paras: biasbn (no bias or bn)')
     parser.add_argument('--prefix', default='model_', help='prefix for the checkpint model')
     parser.add_argument('--suffix', default='.t7', help='prefix for the checkpint model')
-    parser.add_argument('--start_epoch', default=0, type=int, help='min index of epochs')
-    parser.add_argument('--max_epoch', default=500, type=int, help='max number of epochs')
-    parser.add_argument('--save_epoch', default=1, type=int, help='save models every few epochs')
-    parser.add_argument('--dir_file', default='', help='load the direction file for projection')
 
-    args = parser.parse_args()     
-    direction_matlab_name = args.model_folder + '\\PCA_tiny_epoch1_10\\directions_matlab.h5'
-    direction_python_name = args.model_folder + '\\PCA_tiny_epoch1_10\\directions.h5'
-    convert_matlab_pca_data(args, direction_matlab_name,direction_python_name)
+    args = parser.parse_args()
+
+    for tiny_epoch in range(1,501):      
+        direction_matlab_name = args.model_folder + '/PCA_tiny_epoch' + str(tiny_epoch) + '/directions_matlab.h5'
+        direction_python_name = args.model_folder + '/PCA_tiny_epoch' + str(tiny_epoch) + '/directions.h5'
+        convert_matlab_pca_data(args, direction_matlab_name,direction_python_name)
 
