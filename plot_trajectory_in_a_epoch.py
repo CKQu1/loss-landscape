@@ -134,10 +134,12 @@ if __name__ == '__main__':
     parser.add_argument('--ignore', default='', help='ignore bias and BN paras: biasbn (no bias or bn)')
     parser.add_argument('--prefix', default='model_', help='prefix for the checkpint model')
     parser.add_argument('--suffix', default='.t7', help='prefix for the checkpint model')
+    parser.add_argument('--max_epoch', default=500, type=int, help='max number of epochs')
+    parser.add_argument('--max_dir', default=250, type=int, help='max number of tiny_directions')
 
     args = parser.parse_args()
 
-    for tiny_epoch in range(1,501):      
+    for tiny_epoch in range(1,args.max_dir + 1):      
         direction_matlab_name = args.model_folder + '/PCA_tiny_epoch' + str(tiny_epoch) + '/directions_matlab.h5'
         direction_python_name = args.model_folder + '/PCA_tiny_epoch' + str(tiny_epoch) + '/directions.h5'
         convert_matlab_pca_data(args, direction_matlab_name,direction_python_name)
