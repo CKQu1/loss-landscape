@@ -215,7 +215,7 @@ if __name__ == '__main__':
         rank, nproc = comm.Get_rank(), comm.Get_size()
     else:
         comm, rank, nproc = None, 0, 1
-
+    
     # in case of multiple GPUs per node, set the GPU to use for each rank
     if args.cuda:
         if not torch.cuda.is_available():
