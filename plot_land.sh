@@ -29,79 +29,33 @@ cd "$PBS_O_WORKDIR"
 # python plot_trajectory_in_a_epoch.py --model resnet20_noshort --model_folder ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1
 # python plot_trajectory_in_a_epoch.py --model resnet14 --model_folder ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1
 
-# python plot_surface.py --cuda --model resnet14 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/model_160.t7 --dir_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch8  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
-# python plot_surface.py --cuda --model resnet14 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/model_320.t7 --dir_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch16  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
+# python plot_surface.py --cuda --model resnet110 --x=-5:40:51 --y=-10:8:51 --model_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
-# python plot_surface.py --cuda --model resnet14 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch25  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
+# python plot_surface.py --cuda --model resnet20_noshort --x=-5:75:51 --y=-18:13:51 --model_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
+# python plot_surface.py --cuda --model resnet56 --x=-10:70:51 --y=-15:15:51 --model_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
-# python plot_surface.py --cuda --model resnet20 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_160.t7 --dir_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch80  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
+# python plot_surface.py --cuda --model resnet14 --x=-5:30:51 --y=-10:5:51 --model_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
-# python plot_surface.py --cuda --model resnet20 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_320.t7 --dir_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch160  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
+# python plot_surface.py --cuda --model resnet20 --x=-5:65:51 --y=-18:13:51 --model_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
-# python plot_surface.py --cuda --model resnet20 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch51  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
+#from far to near
+python plot_surface.py --cuda --model resnet14 --x=20:25:251 --y=-5:-1:251 --model_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
- 
-#python plot_surface.py --cuda --model resnet20_noshort --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_160.t7 --dir_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch80/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-#python plot_surface.py --cuda --model resnet20_noshort --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_320.t7 --dir_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch160/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-#python plot_surface.py --cuda --model resnet20_noshort --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch51/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
+python plot_surface.py --cuda --model resnet14 --x=4:7:251 --y=-5:-3:251 --model_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
 
-# python plot_surface.py --cuda --model resnet56 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_160.t7 --dir_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch80  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
+python plot_surface.py --cuda --model resnet20_noshort --x=52:62:251 --y=0:5:125 --model_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
-# python plot_surface.py --cuda --model resnet56 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_320.t7 --dir_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch160  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-# python plot_surface.py --cuda --model resnet56 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch51  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
- 
-#python plot_surface.py --cuda --model resnet110 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/model_160.t7 --dir_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch16/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-#python plot_surface.py --cuda --model resnet110 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/model_320.t7 --dir_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch32/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-#python plot_surface.py --cuda --model resnet110 --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/PCA_tiny_epoch50/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
+python plot_surface.py --cuda --model resnet20_noshort --x=7:12:251 --y=-8:-5:151 --model_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
 
+python plot_surface.py --cuda --model resnet56 --x=40:50:251 --y=-5:0:125 --model_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
-python plot_surface.py --cuda --model resnet110 --x=-5:40:51 --y=-10:8:51 --model_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet110_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-python plot_surface.py --cuda --model resnet20_noshort --x=-5:75:51 --y=-18:13:51 --model_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet20_noshort_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-python plot_surface.py --cuda --model resnet56 --x=-10:70:51 --y=-15:15:51 --model_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-python plot_surface.py --cuda --model resnet14 --x=-5:30:51 --y=-10:5:51 --model_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-python plot_surface.py --cuda --model resnet20 --x=-5:65:51 --y=-18:13:51 --model_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet20_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
-
-
-#python plot_surface.py --cuda --model resnet20 --x=-1:1:251 --y=-1:1:251 --model_file ./trained_nets/resnet20_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
-
-#python plot_surface.py --cuda --model resnet20_noshort --x=-1:1:251 --y=-1:1:251 --model_file ./trained_nets/resnet20_noshort_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/model_500.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
-
-
-#python plot_trajectory.py --cuda --model resnet56_noshort --model_folder ./trained_nets/resnet56_noshort_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
-
-#python plot_trajectory.py --cuda --model resnet56 --model_folder ./trained_nets/resnet56_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
-
-#python plot_trajectory.py --cuda --model resnet110_noshort --model_folder ./trained_nets/resnet110_noshort_sgd_lr\=0.1_bs\=256_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
-
-#python plot_trajectory.py --cuda --model resnet110 --model_folder ./trained_nets/resnet110_sgd_lr\=0.1_bs\=256_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 500 --ignore biasbn
-
-#python plot_trajectory.py --cuda --model alex --model_folder ./trained_nets/alex_noshort_sgd_lr\=0.1_bs\=1024_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
-
-#python plot_trajectory.py --cuda --model alex --model_folder ./trained_nets/alex_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1/ --dir_type weights --max_epoch 1300 --ignore biasbn
+python plot_surface.py --cuda --model resnet56 --x=12:20:251 --y=-12:-7:155 --model_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/model_500.t7 --dir_file ./trained_nets/resnet56_sgd_lr=0.1_bs=128_wd=0_mom=0_save_epoch=1/PCA_weights_ignore=biasbn_save_epoch=1/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log
 
 
 
 
-#python plot_surface.py --cuda --model alex --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/alex_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_300.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
 
-#python plot_surface.py --cuda --model alex --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/alex_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_1205.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
-
-#python plot_surface.py --cuda --model alex --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/alex_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_100.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
-
-#python plot_surface.py --cuda --model alex --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/alex_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_50.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
-
-#python plot_surface.py --cuda --model alex --x=-1:1:51 --y=-1:1:51 --model_file ./trained_nets/alex_sgd_lr\=0.1_bs\=128_wd\=0_mom\=0_save_epoch\=1/model_30.t7 --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot
