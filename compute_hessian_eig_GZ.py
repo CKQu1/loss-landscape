@@ -43,13 +43,12 @@ if __name__ == '__main__':
 
     # model parameters
     parser.add_argument('--model', default='resnet56', help='model name')
-    parser.add_argument('--model_folder', default='./trained_nets/resnet14_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1', help='the common folder that contains model_file and model_file2')
-    parser.add_argument('--max_epoch', default='500', help='the maximum epoch')
+    parser.add_argument('--model_folder', default='./trained_nets/resnet14_sgd_lr=0.1_bs=512_wd=0_mom=0_save_epoch=1', help='the common folder that contains model_file and model_file2')
+    parser.add_argument('--max_epoch', type=int, default=500, help='the maximum epoch')
     parser.add_argument('--loss_name', '-l', default='crossentropy', help='loss functions: crossentropy | mse')    
 
-    # plot parameters
-    parser.add_argument('--show', action='store_true', default=False, help='show plotted figures')
-    parser.add_argument('--plot', action='store_true', default=False, help='plot figures after computation')
+    # eig parameters
+    parser.add_argument('--num_eigenthings', type=int, default=5, help='compute how many top eigenvalues/eigenvectors')
 
     args = parser.parse_args()
 
@@ -62,8 +61,7 @@ if __name__ == '__main__':
     if args.cuda:
         if not torch.cuda.is_available():
             raise Exception('User selected cuda option, but cuda is not available on this machine')
-        gpu_count = torch.cuda.device_count()
-        torch.cuda.set_device(rank % gpu_count)
+        gpu_count = torch.cuda.device_count()        
         print('Use GPU %d of %d GPUs on %s' %
               (torch.cuda.current_device(), gpu_count, socket.gethostname()))
 
@@ -71,7 +69,7 @@ if __name__ == '__main__':
         #--------------------------------------------------------------------------
         # Load models and extract parameters
         #--------------------------------------------------------------------------
-        net = model_loader.load(args.dataset, args.model, 'model_' + str(epoch))
+        net = model_loader.load(args.dataset, args.model, args.model_folder+'/model_' + str(epoch) + '.t7')
         if args.ngpu > 1:
             # data parallel with multiple GPUs on a single node
             net = nn.DataParallel(net, device_ids=range(torch.cuda.device_count()))
@@ -81,7 +79,7 @@ if __name__ == '__main__':
         # Setup dataloader
         #--------------------------------------------------------------------------
         # download CIFAR10 if it does not exit
-        if rank == 0 and args.dataset == 'cifar10':
+        if args.dataset == 'cifar10':
             torchvision.datasets.CIFAR10(root=args.dataset + '/data', train=True, download=True)
 
 
@@ -100,16 +98,16 @@ if __name__ == '__main__':
 
         #--------------------------------------------------------------------------
         # Start the computation
-        #--------------------------------------------------------------------------
-        num_eigenthings = 5  # compute top 20 eigenvalues/eigenvectors
+        #--------------------------------------------------------------------------        
 
         eigenvals, eigenvecs = compute_hessian_eigenthings(net, trainloader,
-                                                       loss, num_eigenthings,False,"power_iter",True,512)
+                                                       loss, args.num_eigenthings,False,"power_iter",True,args.batch_size)
 
         #--------------------------------------------------------------------------
         # save results
         #--------------------------------------------------------------------------
-        sio.savemat(args.model_folder + '/eigendata_',str(epoch),'.mat',
-                                mdict={'eigenvals': eigenvals,'eigenvecs': eigenvecs},
+        
+        sio.savemat(args.model_folder + '/eigendata_' + str(epoch) + '.mat',
+                                mdict={'eigenvals': eigenvals,'eigenvecs': eigenvecs}
                                 )
 
