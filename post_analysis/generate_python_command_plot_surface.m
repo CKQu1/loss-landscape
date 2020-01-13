@@ -32,7 +32,7 @@ for ii = 1:length(d)
         y_range = abs(max(x) - min(x));
         
         command = ['python plot_surface.py --cuda --model resnet',model_name{ii},sprintf(' --x=%d:%d:51 --y=%d:%d:51 ',round(min(x) - 0.2*x_range), round(max(x) + 0.2*x_range), round(min(y) - 0.2*y_range), round(max(y) + 0.2*y_range)),...
-            '--model_file ./trained_nets/',d(ii).name,'/model_',num2str(file_name{ii}(jj)),'.t7 --dir_file ./trained_nets/',d(ii).name,sprintf('/PCA_tiny_epoch%d',pool{ii}(jj)),'  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log'];
+            '--model_file ./trained_nets/',d(ii).name,'/model_',num2str(file_name{ii}(jj)),'.t7 --dir_file ./trained_nets/',d(ii).name,sprintf('/PCA_tiny_epoch%d',pool{ii}(jj)),'/directions.h5  --dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --log'];
         fwrite(fileID,command);
         fprintf(fileID,'\n');
     end
