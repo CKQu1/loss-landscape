@@ -1,7 +1,7 @@
 % calculate the statistical property of SGD walk
 function SGD_analysis_step_level(varargin)
 % read in data
-d = dir('*net*');
+d = dir('resnet*');
 calculate = 0;
 steps_in_part = 1e3;
 % Loop number for PBS array job
@@ -47,6 +47,9 @@ for ii = 1:length(d)
                 index = 1; % start again
             end
             index = index + 1;
+            %if part_num > 1
+            %    break
+            %end
         end
         
     end
@@ -101,108 +104,118 @@ for ii = 1:length(d)
             P1_test_loss{part} = nan;
         end        
     end
-    % starting moment of square displacement
-    t_start = [2.^(0:8),400];
-    figure_width = 16;
-    total_row = 1;
-    total_column = 2;
-    
-    % [ verti_length, verti_dis, hori_dis ] = get_details_for_subaxis( total_row, total_column, hori_length, edge_multiplyer_h, inter_multiplyer_h, edge_multiplyer_v, inter_multiplyer_v )
-    EMH = 0.2;
-    EMV = 0.4;
-    
-    % displacement distribution
-    dis_interval = 2.^(0:8);
-    all_disp = [];
-    for epoch_seg = 1:length(tau)
-        for jj = 1:length(dis_interval)
-            eval(['displacement_',num2str(dis_interval(jj)),' = diag(Displacement_all{',num2str(epoch_seg),'},',num2str(dis_interval(jj)),');']);
-            eval(['all_disp = [all_disp;displacement_',num2str(dis_interval(jj)),'(:)];'])
-        end
-    end
-    
-    [ figure_hight, SV, SH, MT, MB, ML, MR ] = get_details_for_subaxis( total_row, total_column, figure_width, EMH, 0.4, EMV, 0.4, 0.68, 0.5,5,4);
-    % uniform FontSize and linewidth
-    figure('NumberTitle','off','name', 'displacement_distri', 'units', 'centimeters', ...
-        'color','w', 'position', [0, 0, figure_width, figure_hight], ...
-        'PaperSize', [figure_width, figure_hight]); % this is the trick!
-    
-    subaxis(total_row,total_column,1,1,'SpacingHoriz',SH,...
-        'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-    title('disp. distri.')
-    [N,edges] = histcounts(all_disp,'Normalization','pdf');
-    plot(edges(1:end-1),N,'k-')
-    set(gca,'xscale','log','yscale','log')
-    xlabel('Displacement')
-    ylabel('PDF')
-    set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
-    
-    subaxis(total_row,total_column,2,1,'SpacingHoriz',SH,...
-        'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-    title('D^2 distribution')
-    [N,edges] = histcounts(all_disp.^2,'Normalization','pdf');
-    plot(edges(1:end-1),N,'k-')
-    set(gca,'xscale','log','yscale','log')
-    xlabel('Displacement^2')
-    ylabel('PDF')
-    set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
-    
-    saveas(gcf,fullfile(sub_loss_w_dir(1).folder,'displacement_distribution.fig'))
-
-    
-%     for epoch_seg = 1:length(tau)
-%         figure_width = 16;
-%         total_row = 1;
-%         total_column = 2;
-%         
-%         % [ verti_length, verti_dis, hori_dis ] = get_details_for_subaxis( total_row, total_column, hori_length, edge_multiplyer_h, inter_multiplyer_h, edge_multiplyer_v, inter_multiplyer_v )
-%         EMH = 0.2;
-%         EMV = 0.4;
-%         
-%         [ figure_hight, SV, SH, MT, MB, ML, MR ] = get_details_for_subaxis( total_row, total_column, figure_width, EMH, 0.4, EMV, 0.4, 0.68, 0.5,5,4);
-%         % uniform FontSize and linewidth
-%         figure('NumberTitle','off','name', 'displacement_distri', 'units', 'centimeters', ...
-%             'color','w', 'position', [0, 0, figure_width, figure_hight], ...
-%             'PaperSize', [figure_width, figure_hight]); % this is the trick!
-%         
-%         
-%         subaxis(total_row,total_column,1,2,'SpacingHoriz',SH,...
-%             'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-%         hold on
-%         legend_txt = [];
-%         map = brewermap(length(t_start),'YlorRd');
-%         for jj = 1:length(t_start)
-%             try
-%                 plot(Displacement_all{epoch_seg}(t_start(jj),(1 + t_start(jj)):end),'color',map(jj,:))
-%                 legend_txt{end+1} = ['t_w=',num2str(t_start(jj))];
-%             catch
-%             end
-%         end
-%         set(gca,'xscale','log','yscale','log')
-%         xlabel('\tau')
-%         ylabel('$\Delta(t_w,t_w+\tau)$','interpreter','latex')
-%         legend(legend_txt)
-%         
-%         subaxis(total_row,total_column,2,2,'SpacingHoriz',SH,...
-%             'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-%         hold on
-%         legend_txt = [];
-%         for jj = 1:length(t_start)
-%             try
-%                 plot(Contour_length_all{epoch_seg}(t_start(jj),:),Displacement_all{epoch_seg}(t_start(jj),:),'color',map(jj,:))
-%                 legend_txt{end+1} = ['t_w=',num2str(t_start(jj))];
-%             catch
-%             end
-%         end
-%         set(gca,'xscale','log','yscale','log')
-%         xlabel('Contour length')
-%         ylabel('$\Delta(t_w,t_w+\tau)$','interpreter','latex')
-%         legend(legend_txt)
-%         
-%         saveas(gcf,fullfile(sub_loss_w_dir(1).folder,['displacement_plot_',num2str(epoch_seg),'_',num2str(part),'.fig']))
-%         close all
+%     % starting moment of square displacement
+%     t_start = [2.^(0:8),400];
+%     figure_width = 25;
+%     total_row = 2;
+%     total_column = 2;
+%     
+%     % [ verti_length, verti_dis, hori_dis ] = get_details_for_subaxis( total_row, total_column, hori_length, edge_multiplyer_h, inter_multiplyer_h, edge_multiplyer_v, inter_multiplyer_v )
+%     EMH = 0.2;
+%     EMV = 0.4;
+%                             
+% 
+%     % displacement distribution
+%     dis_interval = 2.^(0:8);    
+%     for jj = 1:length(dis_interval)
+%             eval(['displacement_',num2str(dis_interval(jj)),' = [];']);
 %     end
+%     % for distribution
+%     for epoch_seg = 1:length(tau)
+%         for jj = 1:length(dis_interval)
+%             %eval(['displacement_',num2str(dis_interval(jj)),' = diag(Displacement_all{',num2str(epoch_seg),'},',num2str(dis_interval(jj)),');']);
+%             try
+%                 eval(['displacement_',num2str(dis_interval(jj)),' = [displacement_',num2str(dis_interval(jj)),';diag(Displacement_all{',num2str(epoch_seg),'},',num2str(dis_interval(jj)),')];']);
+%             catch
+%             end
+%         end
+%     end
+%     
+%     % for rescale
+%     for epoch_seg = 1:length(tau)
+%         for jj = 1:length(dis_interval)
+%             try
+%                 eval(['displacement_scale{',num2str(epoch_seg),',',num2str(jj),'} = sqrt(diag(Displacement_all{',num2str(epoch_seg),'},',num2str(dis_interval(jj)),')./MSD{',num2str(epoch_seg),'}(',num2str(dis_interval(jj)),'));']);
+%             catch
+%             end
+%         end
+%     end
+%     
+%     close all
+%     [ figure_hight, SV, SH, MT, MB, ML, MR ] = get_details_for_subaxis( total_row, total_column, figure_width, EMH, 0.4, EMV, 0.4, 0.68, 0.7,5,4);
+%     % uniform FontSize and linewidth
+%     figure('NumberTitle','off','name', 'displacement_distri', 'units', 'centimeters', ...
+%         'color','w', 'position', [0, 0, figure_width, figure_hight], ...
+%         'PaperSize', [figure_width, figure_hight]); % this is the trick!
+%     
+%     subaxis(total_row,total_column,1,1,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+%     hold on
+%     map = jet(length(dis_interval));
+%     for jj = 1:length(dis_interval)
+%         eval(['all_disp = displacement_',num2str(dis_interval(jj)),';'])
+%         all_disp = all_disp.^0.5;
+%         log_space_min = log10(min(all_disp));
+%         if isinf(log_space_min)
+%             temp = unique(all_disp);
+%             log_space_min = log10(temp(2));
+%         end
+%         [N,edges] = histcounts(all_disp,logspace(log_space_min,log10(max(all_disp)),51),'Normalization','probability');
+%         plot(edges(1:end-1),N,'.-','color',map(jj,:))
+%     end
+%     for jj = 1:length(dis_interval)
+%         legend_string{jj} = ['\tau = ',num2str(dis_interval(jj))];
+%     end
+%     legend(legend_string)
+%     set(gca,'xscale','log','yscale','log')
+%     xlabel('Displacement')
+%     ylabel('PDF')
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
+%     
+%     subaxis(total_row,total_column,2,1,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+%     hold on
+%     for jj = 1:length(dis_interval)
+%         eval(['all_disp = displacement_',num2str(dis_interval(jj)),';'])
+%         log_space_min = log10(min(all_disp));
+%         if isinf(log_space_min)
+%             temp = unique(all_disp);
+%             log_space_min = log10(temp(2));
+%         end
+%         [N,edges] = histcounts(all_disp,logspace(log_space_min,log10(max(all_disp)),51),'Normalization','probability');
+%         plot(edges(1:end-1),N,'.-','color',map(jj,:))
+%     end
+%     set(gca,'xscale','log','yscale','log')
+%     xlabel('Displacement^2')
+%     ylabel('PDF')
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
+%     
+%     subaxis(total_row,total_column,1,2,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+%     hold on
+%     map = jet(length(dis_interval));
+%     for jj = 1:length(dis_interval)
+%         all_disp = displacement_scale{24,jj};
+%         log_space_min = log10(min(all_disp));
+%         if isinf(log_space_min)
+%             temp = unique(all_disp);
+%             log_space_min = log10(temp(2));
+%         end
+%         [N,edges] = histcounts(all_disp,logspace(log_space_min,log10(max(all_disp)),51),'Normalization','probability');
+%         plot(edges(1:end-1),N,'o-','color',map(jj,:))
+%     end
+%     for jj = 1:length(dis_interval)
+%         legend_string{jj} = ['\tau = ',num2str(dis_interval(jj))];
+%     end
+%     legend(legend_string)
+%     set(gca,'xscale','log','yscale','log')
+%     xlabel('Displacement')
+%     ylabel('PDF')
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
     
+%     saveas(gcf,fullfile(sub_loss_w_dir(1).folder,'displacement_distribution.fig'))
+
+       
     % plot
     figure_width = 24;
     total_row = 3;
@@ -241,7 +254,7 @@ for ii = 1:length(d)
         plot(1:length(delta_train_loss{k}),abs(delta_train_loss{k}),'color',map(k,:))
         legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
     end
-    legend(legend_string)
+%     legend(legend_string)
     xlabel('Time (step)')
     ylabel('{\Delta}Train Loss')
     %legend({'train loss','test loss'})
@@ -258,106 +271,106 @@ for ii = 1:length(d)
     for k=1:length(tau)
         [N,edges] = histcounts(delta_train_loss{k});
         plot(edges(1:end-1),N,'o-','color',map(k,:))
-        [N,edges] = histcounts(delta_test_loss{k});
-        plot(edges(1:end-1),N,'.-','color',map(k,:))
-        legend_string{2*k-1} = ['train step:',num2str(1 + (k-1)*steps_in_part)];
-        legend_string{2*k} = ['test step:',num2str(1 + (k-1)*steps_in_part)];
+        % [N,edges] = histcounts(delta_test_loss{k});
+        % plot(edges(1:end-1),N,'.-','color',map(k,:))
+        legend_string{k} = ['train step:',num2str(1 + (k-1)*steps_in_part)];
+        %legend_string{2*k} = ['test step:',num2str(1 + (k-1)*steps_in_part)];
     end
-    legend(legend_string)
+%     legend(legend_string)
     clear legend_string
     %     set(gca,'xscale','log','yscale','log')
     xlabel('{\Delta}Loss')
     ylabel('Counts')
-    legend({'train loss','test loss'})
     set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
     
-    subaxis(total_row,total_column,1,2,'SpacingHoriz',SH,...
-        'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-    hold on
-    for k=1:length(tau)
-        plot(loss{k},'color',map(k,:))
-        legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
-    end
-    legend(legend_string)
-    xlabel('Step')
-    ylabel('Loss')
-    set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
-    
-    subaxis(total_row,total_column,2,2,'SpacingHoriz',SH,...
-        'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-    hold on
-    for k=1:length(tau)
-        loglog(f_loss{k},P1_loss{k},'color',map(k,:))
-        legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
-    end
-    legend(legend_string)
-    xlabel('Frequency (step^{-1})')
-    ylabel('Loss spectrum')
-    set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
-    
-    subaxis(total_row,total_column,3,2,'SpacingHoriz',SH,...
-        'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-    hold on
-    map = jet(length(contour_length));
-    for k=1:length(tau)
-        loglog(contour_length{k},MSD_forcontour{k},'color',map(k,:))
-        legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
-    end
-    legend(legend_string)
-    xlabel('Contour length')
-    ylabel('{\Delta}r^2(\tau)')
-    %     hold on
-    %     P = polyfit(log(contour_length(contour_length<894)),log(MSD_forcontour(contour_length<894)),1);
-    %     x_fit = logspace(log(min(contour_length)),log(894),20);
-    %     y_fit = P(1)*x_fit + P(2);
-    %     plot(x_fit,y_fit,'r:')
-    %     title(['Slop:',num2str(P(1))])
-    %     axis([min(contour_length),max(contour_length),min(MSD_forcontour),max(MSD_forcontour)])
-    set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
-    
-    subaxis(total_row,total_column,1,3,'SpacingHoriz',SH,...
-        'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-    hold on
-    map = jet(length(tau));
-    for k=1:length(tau)
-        loglog(tau{k},Mean_contourlength{k},'color',map(k,:))
-        legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
-    end
-    legend(legend_string)
-    xlabel('\tau')
-    ylabel('Contour length')
-    set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
-    
-    
-    subaxis(total_row,total_column,2,3,'SpacingHoriz',SH,...
-        'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-    hold on
-    map = jet(length(tau));
-    for k=1:length(tau)
-        % coarse grain for visualization
-        [distance_coarse,MSL_coarse] = coarse_grain(distance{k},MSL_distance{k},50);
-        plot(distance_coarse,MSL_coarse,'.-','color',map(k,:))
-        legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
-    end
-    legend(legend_string)
-    xlabel('Distance')
-    ylabel('Mean squared loss')
-    set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
-    
-    subaxis(total_row,total_column,3,3,'SpacingHoriz',SH,...
-        'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-    hold on
-    map = jet(length(tau));
-    for k=1:length(tau)
-        % coarse grain for visualization
-        [distance_coarse,MSL_coarse] = coarse_grain(contour_length{k},MSL_contourlength{k},50);
-        plot(distance_coarse,MSL_coarse,'.-','color',map(k,:))
-        legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
-    end
-    legend(legend_string)
-    xlabel('Contour length')
-    ylabel('Mean squared loss')
-    set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
+%     subaxis(total_row,total_column,1,2,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+%     
+%     Lecun = load(fullfile(sub_loss_w_dir(1).folder,'MSD_lecun.mat'));
+%     
+%     hold on
+%     legend_txt = [];      
+%     map = jet(length(Lecun.MSD_lecun));
+%     for jj = 1:length(Lecun.MSD_lecun)
+%         plot(Lecun.MSD_lecun{jj},'color',map(jj,:))
+%         legend_txt{end+1} = ['part=',num2str(jj)];        
+%     end
+%     set(gca,'xscale','log','yscale','log')
+%     xlabel('\tau')
+%     ylabel('$\Delta(t_w,t_w+\tau)$','interpreter','latex')
+%     legend(legend_txt)
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out')    
+%     
+%     subaxis(total_row,total_column,2,2,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);    
+%     loglog(Lecun.f_loss,Lecun.P1_loss,'K')
+%     xlabel('Frequency (step^{-1})')
+%     ylabel('Loss spectrum')
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
+%     
+%     subaxis(total_row,total_column,3,2,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+%     hold on
+%     map = jet(length(contour_length));
+%     for k=1:length(tau)
+%         loglog(contour_length{k},MSD_forcontour{k},'color',map(k,:))
+%         legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
+%     end
+% %     legend(legend_string)
+%     xlabel('Contour length')
+%     ylabel('{\Delta}r^2(\tau)')
+%     %     hold on
+%     %     P = polyfit(log(contour_length(contour_length<894)),log(MSD_forcontour(contour_length<894)),1);
+%     %     x_fit = logspace(log(min(contour_length)),log(894),20);
+%     %     y_fit = P(1)*x_fit + P(2);
+%     %     plot(x_fit,y_fit,'r:')
+%     %     title(['Slop:',num2str(P(1))])
+%     %     axis([min(contour_length),max(contour_length),min(MSD_forcontour),max(MSD_forcontour)])
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
+%     
+%     subaxis(total_row,total_column,1,3,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+%     hold on
+%     map = jet(length(tau));
+%     for k=1:length(tau)
+%         loglog(tau{k},Mean_contourlength{k},'color',map(k,:))
+%         legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
+%     end
+% %     legend(legend_string)
+%     xlabel('\tau')
+%     ylabel('Contour length')
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
+%     
+%     
+%     subaxis(total_row,total_column,2,3,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+%     hold on
+%     map = jet(length(tau));
+%     for k=1:length(tau)
+%         % coarse grain for visualization
+%         [distance_coarse,MSL_coarse] = coarse_grain(distance{k},MSL_distance{k},50);
+%         plot(distance_coarse,MSL_coarse,'.-','color',map(k,:))
+%         legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
+%     end
+% %     legend(legend_string)
+%     xlabel('Distance')
+%     ylabel('Mean squared loss')
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
+%     
+%     subaxis(total_row,total_column,3,3,'SpacingHoriz',SH,...
+%         'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+%     hold on
+%     map = jet(length(tau));
+%     for k=1:length(tau)
+%         % coarse grain for visualization
+%         [distance_coarse,MSL_coarse] = coarse_grain(contour_length{k},MSL_contourlength{k},50);
+%         plot(distance_coarse,MSL_coarse,'.-','color',map(k,:))
+%         legend_string{k} = ['step:',num2str(1 + (k-1)*steps_in_part)];
+%     end
+% %     legend(legend_string)
+%     xlabel('Contour length')
+%     ylabel('Mean squared loss')
+%     set(gca,'linewidth',1,'fontsize',12,'tickdir','out','xscale','log','yscale','log')
     
     
     saveas(gcf,fullfile(sub_loss_w_dir(1).folder,[d(ii).name(1:end-24),'_plot_',num2str(part),'.fig']))
@@ -436,91 +449,3 @@ end
 distance_coarse = movmean(Dis_coarse,2);
 distance_coarse = distance_coarse(2:end);
 end
-
-
-%  for epoch_seg = 1:length(tau)
-%         % displacement distribution
-%         dis_interval = 2.^(0:8);
-%         all_disp = [];
-%         for jj = 1:length(dis_interval)
-%             eval(['displacement_',num2str(dis_interval(jj)),' = diag(Displacement_all{',num2str(epoch_seg),'},',num2str(dis_interval(jj)),');']);
-%             eval(['all_disp = [all_disp;displacement_',num2str(dis_interval(jj)),'(:)];'])
-%         end
-%         
-%         [ figure_hight, SV, SH, MT, MB, ML, MR ] = get_details_for_subaxis( total_row, total_column, figure_width, EMH, 0.4, EMV, 0.4, 0.68, 0.5,5,4);
-%         % uniform FontSize and linewidth
-%         figure('NumberTitle','off','name', ['displacement_',num2str(epoch_seg)], 'units', 'centimeters', ...
-%             'color','w', 'position', [0, 0, figure_width, figure_hight], ...
-%             'PaperSize', [figure_width, figure_hight]); % this is the trick!
-%         
-%         subaxis(total_row,total_column,1,1,'SpacingHoriz',SH,...
-%             'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-%         title('disp. distri.')
-%         hold on
-%         legend_txt = [];
-%         map = brewermap(length(dis_interval),'YlorRd');
-%         for jj = 1:length(dis_interval)
-%             eval(['[N,edges] = histcounts(displacement_',num2str(dis_interval(jj)),');']);
-%             plot(edges(1:end-1),N,'color',map(jj,:))
-%             legend_txt{end+1} = ['\tau=',num2str(dis_interval(jj))];
-%         end
-%         set(gca,'xscale','log','yscale','log')
-%         xlabel('Displacement')
-%         ylabel('Counts')
-%         legend(legend_txt)
-%         set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
-%         
-%         subaxis(total_row,total_column,2,1,'SpacingHoriz',SH,...
-%             'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-%         title('D^2 distribution')
-%         
-%         hold on
-%         legend_txt = [];
-%         for jj = 1:length(dis_interval)
-%             eval(['[N,edges] = histcounts(displacement_',num2str(dis_interval(jj)),'.^2);']);
-%             plot(edges(1:end-1),N,'color',map(jj,:))
-%             legend_txt{end+1} = ['\tau=',num2str(dis_interval(jj))];
-%         end
-%         set(gca,'xscale','log','yscale','log')
-%         xlabel('Displacement^2')
-%         ylabel('Counts')
-%         legend(legend_txt)
-%         set(gca,'linewidth',1,'fontsize',12,'tickdir','out')
-%         
-%         
-%         subaxis(total_row,total_column,1,2,'SpacingHoriz',SH,...
-%             'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-%         hold on
-%         legend_txt = [];
-%         map = brewermap(length(t_start),'YlorRd');
-%         for jj = 1:length(t_start)
-%             try
-%                 plot(Displacement_all{epoch_seg}(t_start(jj),(1 + t_start(jj)):end),'color',map(jj,:))
-%                 legend_txt{end+1} = ['t_w=',num2str(t_start(jj))];
-%             catch
-%             end
-%         end
-%         set(gca,'xscale','log','yscale','log')
-%         xlabel('\tau')
-%         ylabel('$\Delta(t_w,t_w+\tau)$','interpreter','latex')
-%         legend(legend_txt)
-%         
-%         subaxis(total_row,total_column,2,2,'SpacingHoriz',SH,...
-%             'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-%         hold on
-%         legend_txt = [];
-%         for jj = 1:length(t_start)
-%             try
-%                 plot(Contour_length_all{epoch_seg}(t_start(jj),:),Displacement_all{epoch_seg}(t_start(jj),:),'color',map(jj,:))
-%                 legend_txt{end+1} = ['t_w=',num2str(t_start(jj))];
-%             catch
-%             end
-%         end
-%         set(gca,'xscale','log','yscale','log')
-%         xlabel('Contour length')
-%         ylabel('$\Delta(t_w,t_w+\tau)$','interpreter','latex')
-%         legend(legend_txt)
-%         
-%         saveas(gcf,fullfile(sub_loss_w_dir(1).folder,['displacement_plot_',num2str(epoch_seg),'_',num2str(part),'.fig']))
-%         close all
-%     end

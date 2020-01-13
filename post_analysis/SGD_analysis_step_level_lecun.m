@@ -1,5 +1,5 @@
 function SGD_analysis_step_level_lecun(varargin)
-d = dir('*net*');
+d = dir('resnet*');
 % Loop number for PBS array job
 loop_num = 0;
 
@@ -37,7 +37,7 @@ for ii = 1:length(d)
     % FFT
     [f_loss,P1_loss,~] = get_fft_new(loss,1,'original');
     
-    save(fullfile(sub_loss_w_dir(1).folder,sprintf('MSD_lecun_%d.mat',ii)),'MSD_lecun',...
+    save(fullfile(sub_loss_w_dir(1).folder,'MSD_lecun.mat'),'MSD_lecun',...
         'contour_length_lecun','dL_lecun','delta_train_loss','f_loss','P1_loss')
     
     figure_width = 32;
