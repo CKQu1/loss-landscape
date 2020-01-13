@@ -13,11 +13,7 @@ import os
 import sys
 import torchvision
 import torch.nn as nn
-import mpi4pytorch
 import dataloader
-import net_plotter
-import plot_2D
-import plot_1D
 import model_loader
 import scheduler
 
@@ -30,8 +26,7 @@ import scipy.io as sio
 ###############################################################
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='plotting loss surface')
-    parser.add_argument('--mpi', '-m', action='store_true', help='use mpi')
+    parser = argparse.ArgumentParser(description='hessian_eigenthings')
     parser.add_argument('--cuda', '-c', action='store_true', help='use cuda')
     parser.add_argument('--threads', default=2, type=int, help='number of threads')
     parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use for each rank, useful for data parallel evaluation')
@@ -48,23 +43,9 @@ if __name__ == '__main__':
 
     # model parameters
     parser.add_argument('--model', default='resnet56', help='model name')
-    parser.add_argument('--model_folder', default='', help='the common folder that contains model_file and model_file2')
-    parser.add_argument('--model_file', default='', help='path to the trained model file')
-    parser.add_argument('--model_file2', default='', help='use (model_file2 - model_file) as the xdirection')
-    parser.add_argument('--model_file3', default='', help='use (model_file3 - model_file) as the ydirection')
-    parser.add_argument('--loss_name', '-l', default='crossentropy', help='loss functions: crossentropy | mse')
-
-    # direction parameters
-    parser.add_argument('--dir_file', default='', help='specify the name of direction file, or the path to an eisting direction file')
-    parser.add_argument('--dir_type', default='weights', help='direction type: weights | states (including BN\'s running_mean/var)')
-    parser.add_argument('--x', default='-1:1:51', help='A string with format xmin:x_max:xnum')
-    parser.add_argument('--y', default=None, help='A string with format ymin:ymax:ynum')
-    parser.add_argument('--xnorm', default='', help='direction normalization: filter | layer | weight')
-    parser.add_argument('--ynorm', default='', help='direction normalization: filter | layer | weight')
-    parser.add_argument('--xignore', default='', help='ignore bias and BN parameters: biasbn')
-    parser.add_argument('--yignore', default='', help='ignore bias and BN parameters: biasbn')
-    parser.add_argument('--idx', default=0, type=int, help='the index for the repeatness experiment')
-    parser.add_argument('--surf_file', default='', help='customize the name of surface file, could be an existing file.')
+    parser.add_argument('--model_folder', default='./trained_nets/resnet14_sgd_lr\=0.1_bs\=512_wd\=0_mom\=0_save_epoch\=1', help='the common folder that contains model_file and model_file2')
+    parser.add_argument('--max_epoch', default='500', help='the maximum epoch')
+    parser.add_argument('--loss_name', '-l', default='crossentropy', help='loss functions: crossentropy | mse')    
 
     # plot parameters
     parser.add_argument('--show', action='store_true', default=False, help='show plotted figures')
@@ -75,12 +56,7 @@ if __name__ == '__main__':
     torch.manual_seed(123)
     #--------------------------------------------------------------------------
     # Environment setup
-    #--------------------------------------------------------------------------
-    if args.mpi:
-        comm = mpi4pytorch.setup_MPI()
-        rank, nproc = comm.Get_rank(), comm.Get_size()
-    else:
-        comm, rank, nproc = None, 0, 1
+    #--------------------------------------------------------------------------   
 
     # in case of multiple GPUs per node, set the GPU to use for each rank
     if args.cuda:
@@ -88,52 +64,52 @@ if __name__ == '__main__':
             raise Exception('User selected cuda option, but cuda is not available on this machine')
         gpu_count = torch.cuda.device_count()
         torch.cuda.set_device(rank % gpu_count)
-        print('Rank %d use GPU %d of %d GPUs on %s' %
-              (rank, torch.cuda.current_device(), gpu_count, socket.gethostname()))
+        print('Use GPU %d of %d GPUs on %s' %
+              (torch.cuda.current_device(), gpu_count, socket.gethostname()))
 
-    #--------------------------------------------------------------------------
-    # Load models and extract parameters
-    #--------------------------------------------------------------------------
-    net = model_loader.load(args.dataset, args.model, args.model_file)
-    if args.ngpu > 1:
-        # data parallel with multiple GPUs on a single node
-        net = nn.DataParallel(net, device_ids=range(torch.cuda.device_count()))
-   
+    for epoch in range(args.max_epoch):
+        #--------------------------------------------------------------------------
+        # Load models and extract parameters
+        #--------------------------------------------------------------------------
+        net = model_loader.load(args.dataset, args.model, 'model_' + str(epoch))
+        if args.ngpu > 1:
+            # data parallel with multiple GPUs on a single node
+            net = nn.DataParallel(net, device_ids=range(torch.cuda.device_count()))
+       
+        
+        #--------------------------------------------------------------------------
+        # Setup dataloader
+        #--------------------------------------------------------------------------
+        # download CIFAR10 if it does not exit
+        if rank == 0 and args.dataset == 'cifar10':
+            torchvision.datasets.CIFAR10(root=args.dataset + '/data', train=True, download=True)
 
-    #--------------------------------------------------------------------------
-    # Setup dataloader
-    #--------------------------------------------------------------------------
-    # download CIFAR10 if it does not exit
-    if rank == 0 and args.dataset == 'cifar10':
-        torchvision.datasets.CIFAR10(root=args.dataset + '/data', train=True, download=True)
 
-    mpi4pytorch.barrier(comm)
+        trainloader, testloader = dataloader.load_dataset(args.dataset, args.datapath,
+                                    args.batch_size, args.threads, args.raw_data,
+                                    args.data_split, args.split_idx,
+                                    args.trainloader, args.testloader)
 
-    trainloader, testloader = dataloader.load_dataset(args.dataset, args.datapath,
-                                args.batch_size, args.threads, args.raw_data,
-                                args.data_split, args.split_idx,
-                                args.trainloader, args.testloader)
+        #--------------------------------------------------------------------------
+        # Setup loss function
+        #--------------------------------------------------------------------------
+        if args.loss_name == 'crossentropy':
+            loss = torch.nn.functional.cross_entropy
+        else:
+            raise Exception('Add your loss function here')
 
-    #--------------------------------------------------------------------------
-    # Setup loss function
-    #--------------------------------------------------------------------------
-    if args.loss_name == 'crossentropy':
-        loss = torch.nn.functional.cross_entropy
-    else:
-        raise Exception('Add your loss function here')
+        #--------------------------------------------------------------------------
+        # Start the computation
+        #--------------------------------------------------------------------------
+        num_eigenthings = 5  # compute top 20 eigenvalues/eigenvectors
 
-    #--------------------------------------------------------------------------
-    # Start the computation
-    #--------------------------------------------------------------------------
-    num_eigenthings = 5  # compute top 20 eigenvalues/eigenvectors
+        eigenvals, eigenvecs = compute_hessian_eigenthings(net, trainloader,
+                                                       loss, num_eigenthings,False,"power_iter",True,512)
 
-    eigenvals, eigenvecs = compute_hessian_eigenthings(net, trainloader,
-                                                   loss, num_eigenthings,False,"power_iter",True,512)
-
-    #--------------------------------------------------------------------------
-    # save results
-    #--------------------------------------------------------------------------
-    sio.savemat(args.model_folder + '/eigendata2.mat',
-                            mdict={'eigenvals': eigenvals,'eigenvecs': eigenvecs},
-                            )
+        #--------------------------------------------------------------------------
+        # save results
+        #--------------------------------------------------------------------------
+        sio.savemat(args.model_folder + '/eigendata_',str(epoch),'.mat',
+                                mdict={'eigenvals': eigenvals,'eigenvecs': eigenvecs},
+                                )
 
