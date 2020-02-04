@@ -65,7 +65,7 @@ if __name__ == '__main__':
         print('Use GPU %d of %d GPUs on %s' %
               (torch.cuda.current_device(), gpu_count, socket.gethostname()))
 
-    for epoch in range(args.max_epoch):
+    for epoch in range(0,args.max_epoch,5):
         #--------------------------------------------------------------------------
         # Load models and extract parameters
         #--------------------------------------------------------------------------
