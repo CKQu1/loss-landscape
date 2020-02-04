@@ -1,6 +1,6 @@
 function transverse_excursion_avalanche_enviroment(varargin)
 % load data
-d = dir('*net*');
+d = dir('resnet14*1024*');
 [end_end_dis2,transversed_excursion,delta_loss_all,loss_all] = deal(cell(length(d),1));
 fragment_length = 50;
 % Loop number for PBS array job

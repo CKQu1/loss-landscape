@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -P THAP
+#PBS -P cortical
 #PBS -N land_noise
 #PBS -q defaultQ 
 #PBS -l select=1:ncpus=1:ngpus=1:mem=24gb
@@ -38,7 +38,7 @@ cd "$PBS_O_WORKDIR"
 #python -m cifar10.main --model='resnet110' --epochs=500  --batch_size=128
 #python -m cifar10.main --model='resnet110_noshort' --epochs=500  --batch_size=128
 
-python compute_hessian_eig_GZ.py --cuda --batch_size=1024 --model='resnet14' --model_folder='./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1' --num_eigenthings=20
+#python compute_hessian_eig_GZ.py --cuda --batch_size=1024 --model='resnet14' --model_folder='./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1' --num_eigenthings=20
 python -m cifar10.main --model='resnet14' --epochs=500  --batch_size=1024 --lr=0.01
 python -m cifar10.main --model='resnet14' --epochs=500  --batch_size=1024 --lr=0.001
 python -m cifar10.main --model='resnet14' --epochs=500  --batch_size=1024 --lr=0.5
