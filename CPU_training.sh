@@ -39,13 +39,13 @@ cd "$PBS_O_WORKDIR"
 #python -m cifar10.main --model='resnet110_noshort' --epochs=500  --batch_size=128
 
 #python compute_hessian_eig_GZ.py --cuda --batch_size=1024 --model='resnet14' --model_folder='./trained_nets/resnet14_sgd_lr=0.1_bs=1024_wd=0_mom=0_save_epoch=1' --num_eigenthings=20
-python -m cifar10.main --model='WRN14_2' --epochs=500  --batch_size=1024 --lr=0.1
-python -m cifar10.main --model='WRN14_4' --epochs=500  --batch_size=1024 --lr=0.1
-python -m cifar10.main --model='WRN14_8' --epochs=500  --batch_size=1024 --lr=0.1
+python -m cifar10.main --model='wrn14_2' --epochs=500  --batch_size=1024 --lr=0.1
+python -m cifar10.main --model='wrn14_4' --epochs=500  --batch_size=1024 --lr=0.1
+python -m cifar10.main --model='wrn14_8' --epochs=500  --batch_size=1024 --lr=0.1
 
-python -m cifar10.main --model='WRN14_2_noshort' --epochs=500  --batch_size=1024 --lr=0.1
-python -m cifar10.main --model='WRN14_4_noshort' --epochs=500  --batch_size=1024 --lr=0.1
-python -m cifar10.main --model='WRN14_8_noshort' --epochs=500  --batch_size=1024 --lr=0.1
+python -m cifar10.main --model='wrn14_2_noshort' --epochs=500  --batch_size=1024 --lr=0.1
+python -m cifar10.main --model='wrn14_4_noshort' --epochs=500  --batch_size=1024 --lr=0.1
+python -m cifar10.main --model='wrn14_8_noshort' --epochs=500  --batch_size=1024 --lr=0.1
 
 #python -m cifar10.main --model='resnet56' --epochs=500  --batch_size=512
 #python -m cifar10.main --model='resnet56_noshort' --epochs=500  --batch_size=512
