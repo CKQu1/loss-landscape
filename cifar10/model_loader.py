@@ -44,6 +44,13 @@ models = {
     'fc56'                  : Alexnet.fc56,
     'fc110'                 : Alexnet.fc110,
     'simplenet'             : Alexnet.simplenet,
+    'wrn14_2'               : resnet.WRN14_2,
+    'wrn14_2_noshort'       : resnet.WRN14_2_noshort,
+    'wrn14_4'               : resnet.WRN14_4,
+    'wrn14_4_noshort'       : resnet.WRN14_4_noshort,
+    'wrn14_8'               : resnet.WRN14_8,
+    'wrn14_8_noshort'       : resnet.WRN14_8_noshort,
+    
 }
 
 def load(model_name, model_file=None, data_parallel=False):
