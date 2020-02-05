@@ -315,3 +315,35 @@ def WRN110_4_noshort():
     depth = 110
     n = (depth - 2) // 6
     return WResNet_cifar(BasicBlock_noshortcut, [n,n,n], 4)
+
+
+####
+def WRN14_2():
+    depth = 14
+    n = (depth - 2) // 6
+    return WResNet_cifar(BasicBlock, [n,n,n], 2)
+
+def WRN14_4():
+    depth = 14
+    n = (depth - 2) // 6
+    return WResNet_cifar(BasicBlock, [n,n,n], 4)
+
+def WRN14_8():
+    depth = 14
+    n = (depth - 2) // 6
+    return WResNet_cifar(BasicBlock, [n,n,n], 8)
+
+def WRN14_2_noshort():
+    depth = 14
+    n = (depth - 2) // 6
+    return WResNet_cifar(BasicBlock_noshortcut, [n,n,n], 2)
+
+def WRN14_4_noshort():
+    depth = 14
+    n = (depth - 2) // 6
+    return WResNet_cifar(BasicBlock_noshortcut, [n,n,n], 4)
+
+def WRN14_8_noshort():
+    depth = 14
+    n = (depth - 2) // 6
+    return WResNet_cifar(BasicBlock_noshortcut, [n,n,n], 8)
