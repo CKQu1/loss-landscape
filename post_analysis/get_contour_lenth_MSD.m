@@ -41,7 +41,7 @@ increment2 = [0;sqrt(sum(increment.^2,2,'omitnan'))];
 % for ii = 1:length(I)    
 %     D2( I(ii) + T*(j(ii)-1) ) = sum(increment2(min(I(ii),j(ii)):max(I(ii),j(ii))),'omitnan');
 % end
-[D,D2] = msd_iteration_parfor_mex(Trajectory,increment2, T, uint32(I), uint32(j), 1);
+[D,D2] = msd_iteration_parfor_mex(Trajectory,increment2, T, I, j, 1);
 
 
 % Time intervals between the two points of each pairing :

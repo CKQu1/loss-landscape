@@ -1,7 +1,7 @@
 % calculate the statistical property of SGD walk
 function SGD_analysis_step_level(varargin)
 % read in data
-d = dir('alex*');
+d = dir('resnet14*');
 calculate = 0;
 steps_in_part = 1e3;
 % Loop number for PBS array job
@@ -53,7 +53,7 @@ for ii = 1:length(d)
     
     % plot
     %sub_loss_w_dir = dir(fullfile(d(ii).folder,d(ii).name,'model*sub_loss_w.mat'));
-    sub_loss_w_dir = dir(fullfile(d(ii).folder,d(ii).name,'*gradient_noise.mat'));
+    sub_loss_w_dir = dir(fullfile(d(ii).folder,d(ii).name,'model*.t7'));
     datax_dir = dir(fullfile(sub_loss_w_dir(1).folder,'*data_part*'));
     
     for part = 1:length(datax_dir)-1
@@ -192,7 +192,7 @@ for ii = 1:length(d)
     hold on
     map = jet(length(dis_interval));
     for jj = 1:length(dis_interval)
-        all_disp = displacement_scale{24,jj};
+        all_disp = displacement_scale{length(tau),jj};
         log_space_min = log10(min(all_disp));
         if isinf(log_space_min)
             temp = unique(all_disp);

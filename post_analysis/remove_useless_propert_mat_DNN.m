@@ -2,7 +2,7 @@
 clear
 close all
 
-d = dir('/scratch/RDS-FSC-cortical-RW/loss-landscape/trained_nets/alex*');
+d = dir('/headnode1/gche4213/Project3/*net*');
 for ii = 1:length(d)
     datax_dir = dir(fullfile(d(ii).folder,d(ii).name,'*data_part*'));
     

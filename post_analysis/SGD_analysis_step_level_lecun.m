@@ -1,5 +1,5 @@
 function SGD_analysis_step_level_lecun(varargin)
-d = dir('resnet14*1024*');
+d = dir('resnet14_512');
 % Loop number for PBS array job
 loop_num = 0;
 

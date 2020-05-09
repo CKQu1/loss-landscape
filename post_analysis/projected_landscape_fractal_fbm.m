@@ -1,5 +1,5 @@
 clear
-h5_name = 'directions.h5_[-5.0,40.0,51]x[-10.0,8.0,51].h5';
+h5_name = 'model_300.t7_weights_xignore=biasbn_xnorm=filter_yignore=biasbn_ynorm=filter.h5_[-1.0,1.0,51]x[-1.0,1.0,51].h5';
 loss=h5read(h5_name,'/train_loss');
 x=h5read(h5_name,'/xcoordinates');
 y=h5read(h5_name,'/ycoordinates');
@@ -23,9 +23,12 @@ parfor kk =1:length(C)
     std_(kk) = std(loss_diff(ic == kk),'omitnan');
 end
 
+save('projected_landscape_fbm.mat','loss_diff','dist','C','loss_','std_')
+
 figure
 plot(C,loss_,'.')
 
 xlabel('Distance')
 ylabel('Mean squared loss')
 set(gca,'xscale','log','yscale','log','fontsize',12)
+

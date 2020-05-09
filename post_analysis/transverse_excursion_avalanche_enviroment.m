@@ -1,6 +1,6 @@
 function transverse_excursion_avalanche_enviroment(varargin)
 % load data
-d = dir('resnet14*1024*');
+d = dir('*net*');
 [end_end_dis2,transversed_excursion,delta_loss_all,loss_all] = deal(cell(length(d),1));
 fragment_length = 50;
 % Loop number for PBS array job
@@ -14,11 +14,11 @@ for ii = 1:length(d)
             continue;
         end
     end
-    sub_loss_w_dir = dir(fullfile(d(ii).folder,d(ii).name,'model*.t7'));
-    datax_dir = dir(fullfile(sub_loss_w_dir(1).folder,'*data_part*'));
+    
+    datax_dir = dir(fullfile(d(ii).folder,d(ii).name,'*data_part*'));
     [end_end_dis2{ii},transversed_excursion{ii}] = deal(cell(length(datax_dir),1));
     for part = 1:length(datax_dir)
-        L = load(fullfile(sub_loss_w_dir(1).folder,[d(ii).name(1:end-24),'_data_part_',num2str(part),'.mat']),'MSD_feed','delta_train_loss','loss');
+        L = load(fullfile(datax_dir(1).folder,[d(ii).name(1:end-24),'_data_part_',num2str(part),'.mat']),'MSD_feed','delta_train_loss','loss');
         % transversed excursion, randomly get 100 fragments
         for rd = 1:100
             fragment_start = randperm(size(L.MSD_feed,1) - fragment_length,1);
