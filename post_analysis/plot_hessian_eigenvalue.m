@@ -53,9 +53,9 @@ for part = 1:length(datax_dir)-1
     end
 end
 %% plot hessian vs MSD exponent
-figure_width = 16;
+figure_width = 8;
 total_row = 1;
-total_column = 2;
+total_column = 1;
 % uniform FontSize and linewidth
 fontsize = 10;
 linewidth = 1.5;
@@ -81,15 +81,7 @@ end
 xlim([1,500])
 xlabel('Epoch')
 ylabel('Eigenvalue')
-text(-0.18,1.1,'a','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
 set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out')
-
-
-% leave space for schematics
-subaxis(total_row,total_column,2,1,'SpacingHoriz',SH,...
-    'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-
-text(-0.18,1.1,'b','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
 
 set(gcf, 'PaperPositionMode', 'auto');
 

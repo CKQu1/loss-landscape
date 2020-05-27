@@ -3,11 +3,11 @@ close all
 
 spatial_epson = 1e-3;
 %learning rate
-eta = 0.004;%x5
+eta = 0.02;%x5
 % noise portion
-eta2 = 0.002;%x5
-n = 10000; %number of samples
-num_rd = 100;
+eta2 = 0.01;%x5
+n = 1000; %number of samples
+num_rd = 5;
 [X,Y,gradient_x,gradient_y,pdf_Tr,pdf_G,noise] = deal(cell(num_rd,1));
 land_ind = zeros(num_rd,1);
 for rd = 1:num_rd

@@ -12,7 +12,10 @@ n = 10000; %number of samples
 num_rd = 5;
 % load data
 load('/import/headnode1/gche4213/Project3/test_toy/test_toy_fractal.mat')
-rd = 77;
+d = dir('/import/headnode1/gche4213/Project3/test_toy/good_figures/*jpg');
+% for ii = 1:length(d)
+% rd = str2num(d(ii).name(6:end-4)); [12,121,134,135,165,170,198,2,228,229,235,236,257,262,28,352,39,40,54,84,86,99]
+rd = 12;
 % load fractal landscape
 L = load('/import/headnode1/gche4213/Project3/post_analysis/bigger_fractal_landscape.mat');
 x = L.x;
@@ -25,62 +28,70 @@ look_up_table = -1:spatial_epson:1;
 [xq, yq] = ndgrid(look_up_table);
 landscape = 10-landscape_F(xq, yq);
 
+% % slice the landscape by the trajectory
+[x_grid,y_grid] = ndgrid(look_up_table);
+F = griddedInterpolant(x_grid,y_grid,landscape);
+clf
+plot(cumsum(sqrt(diff(X{rd}).^2 + diff(Y{rd}).^2)),F(X{rd}(1:end-1),Y{rd}(1:end-1)));
+% rd
+% waitforbuttonpress
+% end
 
 %% plot
-figure
-hold on
-imagesc(look_up_table,look_up_table,landscape)
-% step = 1;
-% color_map = jet(round(length(X)/2+1));
-% for ii=1:step:(length(X)/2+1)
-%     plot(X(ii),Y(ii),'.','color',color_map(ii,:))
-% end
-plot(X{rd},Y{rd},'k-','marker','.')
-plot(X{rd}(end),Y{rd}(end),'ro')
-plot(X{rd}(1),Y{rd}(1),'rx')
-xlabel('X')
-ylabel('Y')
+% figure
+% hold on
+% imagesc(look_up_table,look_up_table,landscape)
+% % step = 1;
+% % color_map = jet(round(length(X)/2+1));
+% % for ii=1:step:(length(X)/2+1)
+% %     plot(X(ii),Y(ii),'.','color',color_map(ii,:))
+% % end
+% plot(X{rd},Y{rd},'k-','marker','.')
+% plot(X{rd}(end),Y{rd}(end),'ro')
+% plot(X{rd}(1),Y{rd}(1),'rx')
+% xlabel('X')
+% ylabel('Y')
 
 
 %% manully output the detail
 % zoom in
-axis([-inf inf -inf inf])
-
-[x_lim,y_lim] = ginput(2);
-axis([sort(x_lim(:));sort(y_lim(:))])
-
-
-while input('pick another point?')
-    [x_sample,y_sample] = ginput(1);
-    plot(x_sample,y_sample,'ro')
-    
-    [~,ind_sample] = min(abs(Y{rd} - y_sample) + abs(X{rd} - x_sample));
-    
-    plot(X{rd}(ind_sample),Y{rd}(ind_sample),'rx')
-    plot(X{rd}(ind_sample-1),Y{rd}(ind_sample-1),'r^')
-    plot(X{rd}(ind_sample+1),Y{rd}(ind_sample+1),'rv')
-    
-    G_previous_x = -gradient_x{rd}(ind_sample-1)*eta;
-    G_previous_y = -gradient_y{rd}(ind_sample-1)*eta;
-    
-    G_current_x = -gradient_x{rd}(ind_sample)*eta;
-    G_current_y = -gradient_y{rd}(ind_sample)*eta;
-    
-    % G_next_x = gradient_x{rd}(ind_sample+1)*eta
-    % G_next_y = gradient_y{rd}(ind_sample+1)*eta
-    
-    step_size_x_pre = X{rd}(ind_sample) - X{rd}(ind_sample-1);
-    step_size_y_pre = X{rd}(ind_sample+1) - X{rd}(ind_sample);
-    
-    step_size_x_next = Y{rd}(ind_sample) - Y{rd}(ind_sample-1);
-    step_size_y_next = Y{rd}(ind_sample+1) - Y{rd}(ind_sample);
-    disp('&&&&&')
-    G_proportion_x_pre = G_previous_x/step_size_x_pre
-    G_proportion_y_pre = G_previous_y/step_size_y_pre
-    
-    G_proportion_x_next = G_current_x/step_size_x_next
-    G_proportion_y_next = G_current_y/step_size_y_next
-end
+% axis([-inf inf -inf inf])
+% 
+% [x_lim,y_lim] = ginput(2);
+% axis([sort(x_lim(:));sort(y_lim(:))])
+% 
+% 
+% while input('pick another point?')
+%     [x_sample,y_sample] = ginput(1);
+%     plot(x_sample,y_sample,'ro')
+%     
+%     [~,ind_sample] = min(abs(Y{rd} - y_sample) + abs(X{rd} - x_sample));
+%     
+%     plot(X{rd}(ind_sample),Y{rd}(ind_sample),'rx')
+%     plot(X{rd}(ind_sample-1),Y{rd}(ind_sample-1),'r^')
+%     plot(X{rd}(ind_sample+1),Y{rd}(ind_sample+1),'rv')
+%     
+%     G_previous_x = -gradient_x{rd}(ind_sample-1)*eta;
+%     G_previous_y = -gradient_y{rd}(ind_sample-1)*eta;
+%     
+%     G_current_x = -gradient_x{rd}(ind_sample)*eta;
+%     G_current_y = -gradient_y{rd}(ind_sample)*eta;
+%     
+%     % G_next_x = gradient_x{rd}(ind_sample+1)*eta
+%     % G_next_y = gradient_y{rd}(ind_sample+1)*eta
+%     
+%     step_size_x_pre = X{rd}(ind_sample) - X{rd}(ind_sample-1);
+%     step_size_y_pre = X{rd}(ind_sample+1) - X{rd}(ind_sample);
+%     
+%     step_size_x_next = Y{rd}(ind_sample) - Y{rd}(ind_sample-1);
+%     step_size_y_next = Y{rd}(ind_sample+1) - Y{rd}(ind_sample);
+%     disp('&&&&&')
+%     G_proportion_x_pre = G_previous_x/step_size_x_pre
+%     G_proportion_y_pre = G_previous_y/step_size_y_pre
+%     
+%     G_proportion_x_next = G_current_x/step_size_x_next
+%     G_proportion_y_next = G_current_y/step_size_y_next
+% end
 
 %% auto find the gradient contribution, need specify the segment where it jumps out (!!!not done!!!)
 % close all
@@ -133,4 +144,5 @@ end
 % % xlim([-1,1])
 % 
 % 
-%         
+
+

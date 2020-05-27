@@ -1,17 +1,17 @@
 clear
-% fractal landscape
+% % fractal landscape
 % load('X:\Project3\test_toy\test_toy_fractal.mat')
 % d = dir('X:\Project3\test_toy\good_figures\*jpg');
 % Convex landscape
-% load('X:\Project3\test_toy_gaussian\test_toy_fractal.mat')
-% d = dir('X:\Project3\test_toy_gaussian\*jpg');
-% randomly shuffled landscape
-load('X:\Project3\test_toy_shuffle\test_toy_shuffle_fractal.mat')
-d = dir('X:\Project3\test_toy_shuffle\*jpg');
+load('X:\Project3\test_toy_gaussian\test_toy_fractal.mat')
+d = dir('X:\Project3\test_toy_gaussian\*jpg');
+% % randomly shuffled landscape
+% load('X:\Project3\test_toy_shuffle\test_toy_shuffle_fractal.mat')
+% d = dir('X:\Project3\test_toy_shuffle\*jpg');
 for ii = 1:length(d)
-%     G(:,ii) = [gradient_x{str2num(d(ii).name(6:end-4))},gradient_y{str2num(d(ii).name(6:end-4))}];
-    % shuffle
-    G(:,ii) = [gradient_x{str2num(d(ii).name(14:end-4))},gradient_y{str2num(d(ii).name(14:end-4))}];
+    G(:,ii) = [gradient_x{str2num(d(ii).name(6:end-4))},gradient_y{str2num(d(ii).name(6:end-4))}];
+%     % shuffle
+%     G(:,ii) = [gradient_x{str2num(d(ii).name(14:end-4))},gradient_y{str2num(d(ii).name(14:end-4))}];
 end
 N = length(G);
 for jj =1:round(N^0.5)

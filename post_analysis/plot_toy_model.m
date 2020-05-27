@@ -1,16 +1,16 @@
 clear
 close all
-figure_width = 16;
-total_row = 2;
-total_column = 2;
+figure_width = 20;
+total_row = 1;
+total_column = 4;
 % uniform FontSize and linewidth
 fontsize = 10;
-linewidth = 1.5;
+linewidth = 1;
 % [ verti_length, verti_dis, hori_dis ] = get_details_for_subaxis( total_row, total_column, hori_length, edge_multiplyer_h, inter_multiplyer_h, edge_multiplyer_v, inter_multiplyer_v )
 EMH = 0.1;
-EMV = 0.4;
+EMV = 0.3;
 MLR = 0.65;
-MBR = 0.9;
+MBR = 1.1;
 [ figure_hight, SV, SH, MT, MB, ML, MR ] = get_details_for_subaxis(total_row, total_column, figure_width, EMH, 0.5, EMV, 0.3, MLR, MBR );
 
 figure('NumberTitle','off','name', 'trapping', 'units', 'centimeters', ...
@@ -25,7 +25,7 @@ L = load('/import/headnode1/gche4213/Project3/post_analysis/bigger_fractal_lands
 x = L.x;
 y = L.y;
 zz = L.zz;
-rd = 2;%277;
+rd = 2;%83;%277;
 z = zz{land_ind(rd)};
 bb=find(Y{rd}>-0.3385,1);
 bb = bb + 200;
@@ -36,27 +36,21 @@ landscape = 10-landscape_F(xq, yq);
 
 hold on
 contour(look_up_table,look_up_table,landscape)
-Traj = plot(X{rd}(bb:end),Y{rd}(bb:end),'k-');
+Traj = plot(X{rd}(bb:end),Y{rd}(bb:end),'k-','linewidth',linewidth*0.7);
 start = plot(X{rd}(bb),Y{rd}(bb),'rx');
 end_point = plot(X{rd}(end),Y{rd}(end),'ro');
 legend([Traj,start,end_point],{'Traj.','Start','End'})
-xlabel('X')
-ylabel('Y')
+% xlabel('X')
+% ylabel('Y')
 % colorbar
 originalSize = get(gca, 'Position');
 % caxis([])
 colormap(cc,'default')
-c = colorbar('Position', [originalSize(1)  originalSize(2)-0.058  originalSize(3) 0.015],'location','south');
+c = colorbar('Position', [originalSize(1)+originalSize(3)+0.01  originalSize(2)  0.007 originalSize(4)],'location','east');
 T = title(c,'Altitude','fontsize',fontsize);
-set(T,'Units', 'Normalized', 'Position', [0.5,-2.6, 0]);
 set(gca, 'Position', originalSize);
-text(-0.18,1.1,'a','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+text(-0.18,1.15,'a','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
 set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out')
-
-% space for schematic of averaing effect
-subaxis(total_row,total_column,1,2,'SpacingHoriz',SH,...
-    'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-text(-0.18,1.1,'b','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
 
 % % MSD of toy model calculating from the whole path
 % subaxis(total_row,total_column,1,3,'SpacingHoriz',SH,...
@@ -73,7 +67,7 @@ t = (1:1000+1)';
 % loglog(tau_total,MSD_total,'k','linewidth',linewidth)
 % ylabel('{\Delta}r^2(\tau)')
 % xlabel('\tau (step)')
-% text(-0.18,1.1,'c','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+% text(-0.18,1.15,'c','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
 % set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log')%,'ytick',[1e-2,1])
 
 % MSD in the initial phase
@@ -85,30 +79,89 @@ subaxis(total_row,total_column,2,1,'SpacingHoriz',SH,...
 % set(h,'units',get(gcf,'defaultaxesunits'));
 % set(h,'tag','subaxis');
 % aa=find(X{rd}<-0.3284,1);
-aa=find(Y{rd}>0.2,1);
+aa=find(X{rd}<-0.5,1);
 
 [MSD_initial,tau_initial] = get_MSD([X{rd}(bb:aa),Y{rd}(bb:aa),t(bb:aa)]);
-loglog(tau_initial,MSD_initial,'k','linewidth',linewidth)
-ylabel('{\Delta}r^2(\tau)')
-set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log')%,'ytick',[1e-2,1])
-text(-0.18,1.1,'c','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+hold on
+loglog(tau_initial,MSD_initial,'b-','linewidth',linewidth)
 
-% MSD in the final phase
-subaxis(total_row,total_column,2,2,'SpacingHoriz',SH,...
-    'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-% h=axes('position',[0.611164462809917 0.0767204301075268 0.366032210834553 0.0793650793650793]);
-% set(h,'box','on');
-% set(h,'units',get(gcf,'defaultaxesunits'));
-% set(h,'tag','subaxis');
 [MSD_end,tau_end] = get_MSD([X{rd}(aa:end),Y{rd}(aa:end),t(aa:end)]);
-loglog(tau_end,MSD_end,'k','linewidth',linewidth)
-xlabel('\tau (step)')
+loglog(tau_end,MSD_end,'m-','linewidth',linewidth)
+% convex
+convex_data = load('/import/headnode1/gche4213/Project3/test_toy_gaussian/test_toy_fractal.mat');
+[MSD_convex,tau_convex] = get_MSD([convex_data.X{1}(1:100),convex_data.Y{1}(1:100),(1:100)']);
+hold on
+loglog(tau_convex,MSD_convex,'b:','linewidth',linewidth)
+
+% random
+rand_data = load('/import/headnode1/gche4213/Project3/test_toy_shuffle/1000/test_toy_shuffle_fractal.mat');
+[MSD_rand,tau_rand] = get_MSD([rand_data.X{1},rand_data.Y{1},t]);
+hold on
+loglog(tau_rand,MSD_rand,'m:','linewidth',linewidth)
+
+legend({'R1 fractal','R2 fractal','Convex','Random'})
+legend boxoff
 ylabel('{\Delta}r^2(\tau)')
-% xlim([1 600])
-set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log')%,'ytick',[1e-2,1e-1])
-text(-0.18,1.1,'d','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+ylim([1e-4,1])
+set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log','ytick',[1e-4,1])
+text(-0.18,1.15,'b','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+
+% gradient distribution
+subaxis(total_row,total_column,3,1,'SpacingHoriz',SH,...
+    'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+
+% fractal landscape
+load('/import/headnode1/gche4213/Project3/test_toy/test_toy_fractal.mat')
+d = dir('/import/headnode1/gche4213/Project3/test_toy/good_figures/*jpg');
+for ii = 1:length(d)
+    G_f(:,ii) = [gradient_x{str2num(d(ii).name(6:end-4))},gradient_y{str2num(d(ii).name(6:end-4))}];
+end
+% Convex landscape
+load('/import/headnode1/gche4213/Project3/test_toy_gaussian/test_toy_fractal.mat')
+d = dir('/import/headnode1/gche4213/Project3/test_toy_gaussian/*jpg');
+for ii = 1:length(d)
+    G_c(:,ii) = [gradient_x{str2num(d(ii).name(6:end-4))},gradient_y{str2num(d(ii).name(6:end-4))}];
+end
+% randomly shuffled landscape
+load('/import/headnode1/gche4213/Project3/test_toy_shuffle/test_toy_shuffle_fractal.mat')
+d = dir('/import/headnode1/gche4213/Project3/test_toy_shuffle/*jpg');
+for ii = 1:length(d)
+    G_r(:,ii) = [gradient_x{str2num(d(ii).name(14:end-4))},gradient_y{str2num(d(ii).name(14:end-4))}];
+end
+
+hold on
+h1 = histogram(G_f,linspace(-5,5,51),'normalization','pdf','edgealpha',1,'facealpha',1,'facecolor',[151,151,151]./255);
+h2 = histogram(G_c,linspace(-5,5,51),'normalization','pdf','edgealpha',0.7,'facealpha',0.7,'facecolor',[36,169,225]./255);
+h3 = histogram(G_r,linspace(-5,5,51),'normalization','pdf','edgealpha',0.5,'facealpha',0.5,'facecolor',[178,18,88]./255);
+legend([h1,h2,h3],{'Fractal','Convex','Random'})
+legend boxoff
+xlim([-5,5])
+
+
+xlabel('Drift')
+ylabel('PDF')
+
+set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out')%,'ytick',[1e-2,1e-1])
+text(-0.18,1.15,'c','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+
+% color-encoded step size
+load('/import/headnode1/gche4213/Project3/test_toy/test_toy_fractal.mat','X','Y','land_ind')
+subaxis(total_row,total_column,4,1,'SpacingHoriz',SH,...
+    'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+bb=1;
+step_size = sqrt(diff(X{rd}(bb:end)).^2+diff(Y{rd}(bb:end)).^2);
+[C,~,ic] = unique(step_size);
+% map = flipud(brewermap(length(C),'OrRd'));
+map = copper(length(C));
+hold on
+for k = bb:length(X{rd})-2
+plot([X{rd}(k),X{rd}(k+1)],[Y{rd}(k),Y{rd}(k+1)],'-','linewidth',linewidth*0.7,'color',map(ic(k-bb+1),:));
+end
+axis([-1,1,-1,1])
+text(-0.18,1.15,'d','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+
 
 set(gcf, 'PaperPositionMode', 'auto');
 
 % output
-% print('-painters' ,'/import/headnode1/gche4213/Project3/outputfigures/toy_model.svg','-dsvg','-r300')
+print('-painters' ,'/import/headnode1/gche4213/Project3/outputfigures/toy_model3.svg','-dsvg','-r300')
