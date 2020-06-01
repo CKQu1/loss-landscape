@@ -53,30 +53,23 @@ for part = 1:length(datax_dir)-1
     end
 end
 %% plot hessian vs MSD exponent
-figure_width = 8;
+figure_width = 16;
+figure_hight = 8;
 total_row = 1;
 total_column = 1;
 % uniform FontSize and linewidth
 fontsize = 10;
 linewidth = 1.5;
 % [ verti_length, verti_dis, hori_dis ] = get_details_for_subaxis( total_row, total_column, hori_length, edge_multiplyer_h, inter_multiplyer_h, edge_multiplyer_v, inter_multiplyer_v )
-EMH = 0.15;
-EMV = 0.45;
-MLR = 0.8;
-MBR = 0.8;
-[ figure_hight, SV, SH, MT, MB, ML, MR ] = get_details_for_subaxis(total_row, total_column, figure_width, EMH, 0.4, EMV, 0.3, MLR, MBR );
-
 figure('NumberTitle','off','name', 'trapping', 'units', 'centimeters', ...
     'color','w', 'position', [0, 0, figure_width, figure_hight], ...
     'PaperSize', [figure_width, figure_hight]); % this is the trick!
 %Hessian eigenvalue
-cc = subaxis(total_row,total_column,1,1,'SpacingHoriz',SH,...
-    'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
 load('/import/headnode1/gche4213/Project3/other/eigen_hessian_resnet14_128.mat')
 hold on
-map = summer(20);
+map = parula(20);
 for k=1:20
-    plot(EV(:,k),'color',map(k,:),'linewidth',linewidth)
+    plot(EV(:,k),'color',map(k,:),'linewidth',linewidth*0.1)
 end
 xlim([1,500])
 xlabel('Epoch')

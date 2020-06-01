@@ -1,11 +1,11 @@
 clear
 close all
 figure_width = 20;
-total_row = 1;
-total_column = 4;
+total_row = 2;
+total_column = 3;
 % uniform FontSize and linewidth
 fontsize = 10;
-linewidth = 1;
+linewidth = 0.7; 
 % [ verti_length, verti_dis, hori_dis ] = get_details_for_subaxis( total_row, total_column, hori_length, edge_multiplyer_h, inter_multiplyer_h, edge_multiplyer_v, inter_multiplyer_v )
 EMH = 0.1;
 EMV = 0.3;
@@ -89,7 +89,7 @@ loglog(tau_initial,MSD_initial,'b-','linewidth',linewidth)
 loglog(tau_end,MSD_end,'m-','linewidth',linewidth)
 % convex
 convex_data = load('/import/headnode1/gche4213/Project3/test_toy_gaussian/test_toy_fractal.mat');
-[MSD_convex,tau_convex] = get_MSD([convex_data.X{1}(1:100),convex_data.Y{1}(1:100),(1:100)']);
+[MSD_convex,tau_convex] = get_MSD([convex_data.X{1}(1:144),convex_data.Y{1}(1:144),(1:144)']);
 hold on
 loglog(tau_convex,MSD_convex,'b:','linewidth',linewidth)
 
@@ -136,32 +136,72 @@ h3 = histogram(G_r,linspace(-5,5,51),'normalization','pdf','edgealpha',0.5,'face
 legend([h1,h2,h3],{'Fractal','Convex','Random'})
 legend boxoff
 xlim([-5,5])
-
-
-xlabel('Drift')
+xlabel('Gradient')
 ylabel('PDF')
-
 set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out')%,'ytick',[1e-2,1e-1])
 text(-0.18,1.15,'c','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
 
+% % log-log
+% insect = axes('position',[0.900263852242744 0.817734053450724 0.0880735994192455 0.149985821741288]);
+% axis(insect);box on;
+% F_f = fitdist(G_f(35,:)','stable');
+% plot(linspace(0,10,1000),pdf(F_f,linspace(0,10,1000)),'r-')
+% % axis([1,1e3,1e-2,1e2])
+% set(gca,'xscale','log','yscale','log','tickdir','out') 
+
 % color-encoded step size
 load('/import/headnode1/gche4213/Project3/test_toy/test_toy_fractal.mat','X','Y','land_ind')
-subaxis(total_row,total_column,4,1,'SpacingHoriz',SH,...
+subaxis(total_row,total_column,1,2,'SpacingHoriz',SH,...
     'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
-bb=1;
-step_size = sqrt(diff(X{rd}(bb:end)).^2+diff(Y{rd}(bb:end)).^2);
+hold on
+contour(look_up_table(1151:1302),look_up_table(852:1002),landscape(852:1002,1151:1302),30)
+cc = find(X{rd}<0.4,1);
+dd = find(X{rd}<0.14,1);
+step_size = sqrt(diff(X{rd}(cc:dd)).^2+diff(Y{rd}(cc:dd)).^2);
 [C,~,ic] = unique(step_size);
-% map = flipud(brewermap(length(C),'OrRd'));
 map = copper(length(C));
 hold on
-for k = bb:length(X{rd})-2
-plot([X{rd}(k),X{rd}(k+1)],[Y{rd}(k),Y{rd}(k+1)],'-','linewidth',linewidth*0.7,'color',map(ic(k-bb+1),:));
+for k = cc:dd-1
+plot([X{rd}(k),X{rd}(k+1)],[Y{rd}(k),Y{rd}(k+1)],'-','linewidth',linewidth*4,'color',map(ic(k-cc+1),:));
 end
-axis([-1,1,-1,1])
+axis([0.15,0.3,-0.15,0])
 text(-0.18,1.15,'d','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+
+% random landscape
+subaxis(total_row,total_column,2,2,'SpacingHoriz',SH,...
+    'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+load('/import/headnode1/gche4213/Project3/test_toy_shuffle/1000/test_toy_shuffle_fractal.mat','X','Y','landscape_pool')
+rd = 1;
+hold on
+contour(look_up_table,look_up_table,landscape_pool{rd})
+plot(X{rd}(1:200),Y{rd}(1:200),'k-','linewidth',linewidth*0.7);
+plot(X{rd}(1),Y{rd}(1),'rx');
+plot(X{rd}(200),Y{rd}(200),'ro');
+text(-0.18,1.15,'e','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+
+
+% convex landscape
+subaxis(total_row,total_column,3,2,'SpacingHoriz',SH,...
+    'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
+load('/import/headnode1/gche4213/Project3/test_toy_gaussian/test_toy_fractal.mat','X','Y')
+spatial_epson = 1e-3;
+load('/import/headnode1/gche4213/Project3/post_analysis/toy_gaussian_landscape.mat');
+landscape_F = griddedInterpolant((repmat(x',1,length(y))-1)*2-1,(repmat(y,length(x),1)-1)*2-1,z,'linear');% may changet to nonlinear interpolation
+look_up_table = -1:spatial_epson:1;
+[xq, yq] = ndgrid(look_up_table);
+landscape = 10-landscape_F(xq, yq);
+
+hold on
+contour(look_up_table,look_up_table,landscape)
+Traj = plot(X{rd},Y{rd},'k-','linewidth',linewidth*0.7);
+start = plot(X{rd}(1),Y{rd}(1),'rx');
+end_point = plot(X{rd}(end),Y{rd}(end),'ro');
+text(-0.18,1.15,'f','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
+set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out')
+
 
 
 set(gcf, 'PaperPositionMode', 'auto');
 
 % output
-print('-painters' ,'/import/headnode1/gche4213/Project3/outputfigures/toy_model3.svg','-dsvg','-r300')
+print('-painters' ,'/import/headnode1/gche4213/Project3/outputfigures/toy_model10.svg','-dsvg','-r300')

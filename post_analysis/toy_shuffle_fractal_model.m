@@ -45,6 +45,7 @@ for rd = 1:num_rd
     look_up_table = -1:spatial_epson:1;
     [xq, yq] = ndgrid(look_up_table);
     landscape = 10-landscape_F(xq, yq);
+    landscape_pool{rd} = landscape;
     [drift_x,drift_y] = gradient(landscape,spatial_epson);
 %     imagesc(drift_x);colorbar
     alpha = 2;
@@ -122,4 +123,4 @@ for rd = 1:num_rd
     
     saveas(gcf,sprintf('test_shuffle_%d.jpg',rd))
 end
-save('test_toy_shuffle_fractal.mat','X','Y','pdf_G','pdf_Tr','gradient_y','gradient_x','z','eta','eta2','noise','-v7.3')
+save('test_toy_shuffle_fractal.mat','X','Y','pdf_G','pdf_Tr','gradient_y','gradient_x','landscape_pool','eta','eta2','noise','-v7.3')

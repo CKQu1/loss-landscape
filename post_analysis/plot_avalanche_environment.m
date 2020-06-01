@@ -52,7 +52,7 @@ figure('NumberTitle','off','name', 'trapping', 'units', 'centimeters', ...
 
 % plot avalanche enviroment
 load('/import/headnode1/gche4213/Project3/trans_ex_avalan.mat')
-%\delta L vs contour length
+% L vs contour length
 subaxis(total_row,total_column,1,1,'SpacingHoriz',SH,...
     'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
 part = 1;
@@ -64,7 +64,7 @@ set(y, 'Units', 'Normalized', 'Position', [-0.24, 0.5, 0]);
 % xlabel('Contour length');
 text(-0.18,1.15,'a','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
 set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out')
-
+%\delta L vs contour length
 subaxis(total_row,total_column,1,2,'SpacingHoriz',SH,...
     'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
 plot(contour_len{2}{part},seg_delta_loss{2}{part},'color','k')

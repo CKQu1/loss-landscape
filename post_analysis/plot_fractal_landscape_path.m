@@ -58,9 +58,10 @@ total_row = 1;
 total_column = 4;
 % uniform FontSize and linewidth
 fontsize = 10;
-linewidth = 1;
+linewidth = 0.7;
 ylabel_shift = -0.25;
-xlabel_shift = -0.18;
+xlabel_shift = -0.2;
+TickLength = 0.03;
 % [ verti_length, verti_dis, hori_dis ] = get_details_for_subaxis( total_row, total_column, hori_length, edge_multiplyer_h, inter_multiplyer_h, edge_multiplyer_v, inter_multiplyer_v )
 EMH = 0.1;
 EMV = 0.5;
@@ -77,47 +78,75 @@ subaxis(total_row,total_column,1,1,'SpacingHoriz',SH,...
 select_num = 24;
 map = jet(select_num);
 hold on
-for k=1:select_num%length(tau)
+for k=[1,round(select_num/5),round(select_num*2/5),round(select_num*3/5),round(select_num*4/5),select_num]%length(tau)
     % coarse grain for visualization
     [distance_coarse,MSL_coarse] = coarse_grain(distance{k},MSL_distance{k},50);
-    plot(distance_coarse,MSL_coarse,'.-','color',map(k,:))
+    plot(distance_coarse,MSL_coarse,'-','color',map(k,:))
 end
 xlim([0.1,10])
 x = xlabel('{\Delta}r');
 set(x, 'Units', 'Normalized', 'Position', [0.5,xlabel_shift, 0]);
-y = ylabel('Mean squared loss');
+y = ylabel('MSL');
 set(y, 'Units', 'Normalized', 'Position', [ylabel_shift, 0.5, 0]);
 text(-0.2,1.15,'a','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
-set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log','xtick',[0.1,1,10])
+set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log','xtick',[0.1,1,10],'TickLength',[TickLength 0.035])
+
 % colorbar
 originalSize = get(gca, 'Position');
 caxis([1,1 + (select_num-1)*1e3])
 colormap('jet')
 c = colorbar('Position', [originalSize(1)+originalSize(3)+0.005, originalSize(2), 0.007, originalSize(4)-0.02],'location','east');
-T = title(c,'t_w (step)','fontsize',fontsize);
+T = title(c,'Time (step)','fontsize',fontsize);
 % set(T,'Units', 'Normalized', 'Position', [0.5,0.1, 0]);
 set(gca, 'Position', originalSize);
 
+% % all curves
+% insect = axes('position',[0.072 0.561133260187066 0.0816417080605139 0.335773956307779]);
+% axis(insect);box on;
+% hold on
+% for k=1:select_num
+%     % coarse grain for visualization
+%     [distance_coarse,MSL_coarse] = coarse_grain(distance{k},MSL_distance{k},50);
+%     plot(distance_coarse,MSL_coarse,'-','color',map(k,:))
+% end
+% xlim([0.1,10])
+% set(gca,'xscale','log','yscale','log','xtick',[],'ytick',[]) 
+
 %MSL vs contour length
-subaxis(total_row,total_column,3,1,'SpacingHoriz',SH,...
+subaxis(total_row,total_column,2,1,'SpacingHoriz',SH,...
     'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
 select_num = 24;
 map = jet(select_num);
 hold on
-for k=1:select_num%length(tau)
+for k=[1,round(select_num/5),round(select_num*2/5),round(select_num*3/5),round(select_num*4/5),select_num]
     % coarse grain for visualization
     [distance_coarse,MSL_coarse] = coarse_grain(contour_length{k},MSL_contourlength{k},50);
-    plot(distance_coarse,MSL_coarse,'.-','color',map(k,:))
+    plot(distance_coarse,MSL_coarse,'-','color',map(k,:))
 end
+axis([1,100,0.0003,1])
 x = xlabel('Contour length');
 set(x, 'Units', 'Normalized', 'Position', [0.5,xlabel_shift, 0]);
 % y = ylabel('Mean squared loss');
 % set(y, 'Units', 'Normalized', 'Position', [ylabel_shift, 0.5, 0]);
 text(-0.2,1.15,'b','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
-set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log')
+set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log','TickLength',[TickLength 0.035])
+
+% % all curves
+% insect = axes('position',[0.318885996424974 0.569020021074815 0.0766166490776715 0.327713382507901]);
+% axis(insect);box on;
+% hold on
+% for k=1:select_num%length(tau)
+%     % coarse grain for visualization
+%     [distance_coarse,MSL_coarse] = coarse_grain(contour_length{k},MSL_contourlength{k},50);
+%     plot(distance_coarse,MSL_coarse,'-','color',map(k,:))
+% end
+% axis([1,100,0.0003,1])
+% set(gca,'xscale','log','yscale','log','xtick',[],'ytick',[]) 
+
+
 
 % leave space for schematic diagram of contour length
-subaxis(total_row,total_column,2,1,'SpacingHoriz',SH,...
+subaxis(total_row,total_column,3,1,'SpacingHoriz',SH,...
     'SpacingVert',SV,'MR',MR,'ML',ML,'MT',MT,'MB',MB);
 text(-0.2,1.15,'c','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
 
@@ -128,8 +157,8 @@ cc = subaxis(total_row,total_column,4,1,'SpacingHoriz',SH,...
 hold on
 select_num = 24;
 map = jet(select_num);
-for k=2:select_num%length(tau)
-    loglog(contour_length{k},smoothdata(MSD_forcontour{k},'movmean',[40,400]),'color',map(k,:),'linewidth',linewidth)
+for k=[2,round(select_num/5),round(select_num*2/5),round(select_num*3/5),round(select_num*4/5),select_num]
+    loglog(contour_length{k},smoothdata(MSD_forcontour{k},'movmean',[40,400]),'color',map(k,:))
 end
 x = xlabel('Contour length');
 set(x, 'Units', 'Normalized', 'Position', [0.5,xlabel_shift, 0]);
@@ -137,7 +166,8 @@ y = ylabel('{\Delta}r^2');
 set(y, 'Units', 'Normalized', 'Position', [ylabel_shift, 0.5, 0]);
 axis([0.08 200 8e-3 100])
 text(-0.2,1.15,'d','fontsize',fontsize,'Units', 'Normalized', 'FontWeight','bold','VerticalAlignment', 'Top')
-set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log','xtick',[0.1,1,10,100])
+set(gca,'linewidth',linewidth,'fontsize',fontsize,'tickdir','out','xscale','log','yscale','log','xtick',[0.1,1,10,100],'TickLength',[TickLength 0.035])
+
 
 % % colorbar
 % originalSize = get(gca, 'Position');
@@ -164,12 +194,10 @@ legend boxoff
 % set(y, 'Units', 'Normalized', 'Position', [-0.22, 0.5, 0]);
 set(gca,'xscale','log','yscale','log','xtick',[],'ytick',[])
 
-
-
 set(gcf, 'PaperPositionMode', 'auto');
 
 % output
-print('-painters' ,'/import/headnode1/gche4213/Project3/outputfigures/fractal_landscape_path2.svg','-dsvg','-r300')
+print('-painters' ,'/import/headnode1/gche4213/Project3/outputfigures/fractal_landscape_path.svg','-dsvg','-r300')
 function [distance_coarse,MSL_coarse] = coarse_grain(distance,MSL,coarse_num)
 % coarse grain for visualization
 Dis_coarse = linspace(min(distance),max(distance),coarse_num+1);

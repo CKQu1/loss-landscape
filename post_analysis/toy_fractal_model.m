@@ -25,14 +25,14 @@ for rd = 1:num_rd
     
     % generate fractal landscape
     % [x,y,z] = fractal_landscape_generator();% x,y in [1,2]
-    L = load('bigger_fractal_landscape.mat');
-    x = L.x;
-    y = L.y;
-    zz = L.zz;
-    land_ind(rd) = randperm(length(zz),1);
-    z = zz{land_ind(rd)};
+%     L = load('bigger_fractal_landscape.mat');
+%     x = L.x;
+%     y = L.y;
+%     zz = L.zz;
+%     land_ind(rd) = randperm(length(zz),1);
+%     z = zz{land_ind(rd)};
     % load('toy_fractal_landscape.mat')
-    % load('toy_gaussian_landscape.mat')
+    load('toy_gaussian_landscape.mat')
     % x0 = -1:spatial_epson:1;
     % [x,y]=ndgrid(x0);
     % landscape = 10-10*exp(-(x.^2 + y.^2)./2);
